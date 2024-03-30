@@ -3,11 +3,14 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using ScreenCapture;
 using System.Drawing;
+using System.Reflection;
 
 namespace BotLogic.ImageFinder;
 
 public class ImageFinder : IImageFinder
 {
+    public const string IMAGES_FOLDER_NAME = "Images";
+
     private readonly IMouseSimulator _mouseSimulator;
     private readonly IScreenCapturer _screenCapturer;
 
@@ -16,28 +19,37 @@ public class ImageFinder : IImageFinder
         _mouseSimulator = mouseSimulator;
         _screenCapturer = screenCapturer;
     }
-    public bool ClickOnImageInWindow(string imagePath)
+    public bool ClickOnImageInWindow(string imageName, string processName)
     {
-        Image? screenShoot = _screenCapturer.GetBitmapScreenshot(imagePath);
+        Image? screenShoot = _screenCapturer.GetBitmapScreenshot(processName);
 
-        if(screenShoot is null)
+        Assembly? assembly = Assembly.GetEntryAssembly();
+
+        if (screenShoot is null || assembly is null)
             return false;
 
+        string? assemblyPath = Path.GetDirectoryName(assembly.Location);
+
+        if (assemblyPath is null)
+            return false;
+
+        string imagePath = Path.Combine(assemblyPath, IMAGES_FOLDER_NAME, imageName);
+
         // Save the screenshot temporarily
-        string tempScreenshotPath = Path.GetTempFileName();
+        string tempScreenshotPath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png"; 
         screenShoot.Save(tempScreenshotPath);
 
         // Capture the screen to obtain an image of the specific open window
         using (Mat screenCapture = new ())
         {
             // Capture the screen
-            CvInvoke.Imread("screenshot.png", ImreadModes.AnyColor).CopyTo(screenCapture); // Or you can use CvInvoke.VideoCapture() to capture from a webcam
+            CvInvoke.Imread(tempScreenshotPath, ImreadModes.AnyColor).CopyTo(screenCapture); // Or you can use CvInvoke.VideoCapture() to capture from a webcam
 
             // Load the template image
             Mat template = CvInvoke.Imread(imagePath, ImreadModes.AnyColor);
 
             // Create a matrix to store the result of the match
-            Mat result = new Mat();
+            Mat result = new ();
 
             // Perform template matching
             CvInvoke.MatchTemplate(screenCapture, template, result, TemplateMatchingType.CcoeffNormed);

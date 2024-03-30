@@ -15,4 +15,13 @@
     <ProjectReference Include="..\ScreenCapture\ScreenCapture.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Images\LeftArrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\RightArrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

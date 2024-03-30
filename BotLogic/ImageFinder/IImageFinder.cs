@@ -2,5 +2,5 @@
 
 public interface IImageFinder
 {
-    bool ClickOnImageInWindow(string imagePath);
+    bool ClickOnImageInWindow(string imagePath, string processName);
 }

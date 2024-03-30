@@ -1,9 +1,15 @@
-﻿using System.Diagnostics;
+﻿using ScreenCapture.Helpers;
 
 namespace ScreenCapture.Windows;
 
 public class WindowsScreenCapturer : IScreenCapturer
 {
+    private readonly IHelpers _helpers;
+
+    public WindowsScreenCapturer(IHelpers helpers)
+    {
+        _helpers = helpers;
+    }
     public Image? GetBitmapScreenshot(string processName)
     {
         Image? img = null;
@@ -11,7 +17,7 @@ public class WindowsScreenCapturer : IScreenCapturer
         //https://ourcodeworld.com/articles/read/890/how-to-solve-csharp-exception-current-thread-must-be-set-to-single-thread-apartment-sta-mode-before-ole-calls-can-be-made-ensure-that-your-main-function-has-stathreadattribute-marked-on-it
         Thread t = new(() =>
         {
-            nint handle = GetWindowHandle(processName);
+            nint handle = _helpers.GetWindowHandle(processName);
 
             //Check if window is minimized and show it if needed
             if (User32.IsIconic(handle))
@@ -45,14 +51,5 @@ public class WindowsScreenCapturer : IScreenCapturer
         t.Join();
 
         return img;
-    }
-
-    private static IntPtr GetWindowHandle(string name)
-    {
-        var process = Process.GetProcessesByName(name).FirstOrDefault();
-        if (process != null && process.MainWindowHandle != IntPtr.Zero)
-            return process.MainWindowHandle;
-
-        return IntPtr.Zero;
     }
 }

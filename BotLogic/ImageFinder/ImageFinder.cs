@@ -2,6 +2,7 @@
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using ScreenCapture;
+using ScreenCapture.Helpers;
 using System.Drawing;
 using System.Reflection;
 
@@ -13,11 +14,13 @@ public class ImageFinder : IImageFinder
 
     private readonly IMouseSimulator _mouseSimulator;
     private readonly IScreenCapturer _screenCapturer;
+    private readonly IHelpers _helpers;
 
-    public ImageFinder(IMouseSimulator mouseSimulator, IScreenCapturer screenCapturer)
+    public ImageFinder(IMouseSimulator mouseSimulator, IScreenCapturer screenCapturer, IHelpers helpers)
     {
         _mouseSimulator = mouseSimulator;
         _screenCapturer = screenCapturer;
+        _helpers = helpers;
     }
     public bool ClickOnImageInWindow(string imageName, string processName)
     {
@@ -66,7 +69,7 @@ public class ImageFinder : IImageFinder
             if (maxValue >= threshold)
             {
                 // Simulate a mouse click on the target area
-                _mouseSimulator.SimulateMouseClick(minLoc);
+                _mouseSimulator.SimulateMouseClick(maxLoc, _helpers.GetWindowHandle(processName));
                 File.Delete(tempScreenshotPath);
                 return true;
             }

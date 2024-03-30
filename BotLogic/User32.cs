@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace BotLogic;
 
@@ -7,9 +8,17 @@ internal class User32
     [DllImport("user32.dll")]
     static extern bool SetCursorPos(int X, int Y);
 
-    public static void MoveCursorToPoint(int x, int y)
+    public static void MoveCursorToPoint(int x, int y, IntPtr? hWnd = null)
     {
-        SetCursorPos(x, y);
+        if (!hWnd.HasValue)
+        {
+            SetCursorPos(x, y);
+            return;
+        }
+
+        Point offsetPoint = new (0, 0);
+        ClientToScreen(hWnd.Value, ref offsetPoint);
+        SetCursorPos(offsetPoint.X + x, offsetPoint.Y + y);
     }
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
@@ -24,4 +33,7 @@ internal class User32
     {
         mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
     }
+
+    [DllImport("user32.dll")]
+    static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
 }

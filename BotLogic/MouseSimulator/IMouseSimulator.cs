@@ -4,5 +4,5 @@ namespace BotLogic.MouseSimulator;
 
 public interface IMouseSimulator
 {
-    void SimulateMouseClick(Point point);
+    void SimulateMouseClick(Point point, IntPtr? hWnd = null);
 }

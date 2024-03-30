@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace BotLogic.Helpers;
+namespace ScreenCapture.Helpers;
 
 public class Helpers : IHelpers
 {
@@ -14,5 +14,14 @@ public class Helpers : IHelpers
                 windowHandleNames.Add(window.ProcessName);
         }
         return windowHandleNames;
+    }
+
+    public IntPtr GetWindowHandle(string name)
+    {
+        var process = Process.GetProcessesByName(name).FirstOrDefault();
+        if (process != null && process.MainWindowHandle != IntPtr.Zero)
+            return process.MainWindowHandle;
+
+        return IntPtr.Zero;
     }
 }

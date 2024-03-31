@@ -1,6 +1,8 @@
-﻿namespace BotLogic.ImageFinder;
+﻿using System.Drawing;
+
+namespace BotLogic.ImageFinder;
 
 public interface IImageFinder
 {
-    bool ClickOnImageInWindow(string imagePath, string processName);
+    Point? GetImageLocation(string imageName, string processName);
 }

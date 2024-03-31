@@ -13,6 +13,13 @@ public partial class MainForm: Form
 
     private void StartStopButton_Click(object sender, EventArgs e)
     {
-        _actions.MoveScreenLeft();
+        var duelists = _actions.GetAllAvalivableDuelistsOnScreen();
+
+        foreach (var duelist in duelists)
+        {
+            _actions.ClickDuelist(duelist);
+            //_actions.ClickDuelistDialogUntilDissapers();
+            //_actions.StartAutoDuel();
+        }
     }
 }

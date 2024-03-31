@@ -18,7 +18,8 @@ internal class User32
 
         Point offsetPoint = new (0, 0);
         ClientToScreen(hWnd.Value, ref offsetPoint);
-        SetCursorPos(offsetPoint.X + x, offsetPoint.Y + y);
+        Point adjustedPoint = new Point(offsetPoint.X + x, offsetPoint.Y + y);
+        SetCursorPos(adjustedPoint.X, adjustedPoint.Y);
     }
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]

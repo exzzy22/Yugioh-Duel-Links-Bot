@@ -1,4 +1,6 @@
-﻿namespace BotLogic;
+﻿using System.Collections.ObjectModel;
+
+namespace BotLogic;
 
 public static class ImageNames
 {
@@ -22,9 +24,9 @@ public static class ImageNames
         public const string VAGABOND = "Duelists\\Vagabond.png";
         public const string YOSH_IMIMI = "Duelists\\Yosh_Imimi.png";
 
-        public static List<string> GetAllDuelists()
+        public static ReadOnlyCollection<string> GetAllDuelists()
         {
-            return new ()
+            return new ReadOnlyCollection<string>(new List<string>
             {
                 ASHLEY,
                 BELLA,
@@ -38,7 +40,7 @@ public static class ImageNames
                 SABURAMEN,
                 VAGABOND,
                 YOSH_IMIMI
-            };
+            });
         }
     }
 }

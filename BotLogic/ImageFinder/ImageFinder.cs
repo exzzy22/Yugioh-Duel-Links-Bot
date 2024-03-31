@@ -9,8 +9,8 @@ namespace BotLogic.ImageFinder;
 public class ImageFinder : IImageFinder
 {
     private const string IMAGES_FOLDER_NAME = "Images";
-    private const double THRESHOLD = 0.8;
-
+    private const double MAX_TRESHOLD = 1;
+    private const double MIN_TRESHOLD = 0.001;
 
     private readonly IScreenCapturer _screenCapturer;
 
@@ -39,43 +39,35 @@ public class ImageFinder : IImageFinder
         string tempScreenshotPath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
         screenShoot.Save(tempScreenshotPath);
 
-        // Capture the screen to obtain an image of the specific open window
-        using (Mat screenCapture = new())
+        Mat img = CvInvoke.Imread(tempScreenshotPath, ImreadModes.Grayscale);
+        Mat template = CvInvoke.Imread(imagePath, ImreadModes.Grayscale);
+        Size size = template.Size;
+
+        Mat img2 = img.Clone();
+
+        Mat result = new Mat();
+        CvInvoke.MatchTemplate(img2, template, result, TemplateMatchingType.SqdiffNormed);
+
+        double minVal = 0, maxVal = 0;
+        Point minLoc = new ();
+        Point maxLoc = new ();
+        CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
+
+        Rectangle rect = new Rectangle(minLoc, size);
+
+        if (maxVal >= MAX_TRESHOLD && minVal <= MIN_TRESHOLD)
         {
-            // Capture the screen
-            CvInvoke.Imread(tempScreenshotPath, ImreadModes.AnyColor).CopyTo(screenCapture); // Or you can use CvInvoke.VideoCapture() to capture from a webcam
+            // Calculate the center of the found image
+            Point center = new (rect.Left + rect.Width / 2, rect.Top + rect.Height / 2);
 
-            // Load the template image
-            Mat template = CvInvoke.Imread(imagePath, ImreadModes.AnyColor);
-
-            // Create a matrix to store the result of the match
-            Mat result = new();
-
-            // Perform template matching
-            CvInvoke.MatchTemplate(screenCapture, template, result, TemplateMatchingType.CcoeffNormed);
-
-            // Find the location of the best match
-            double minValue = 0;
-            double maxValue = 0;
-            Point minLoc = new();
-            Point maxLoc = new();
-            CvInvoke.MinMaxLoc(result, ref minValue, ref maxValue, ref minLoc, ref maxLoc);
-
-            // If the minimum value is greater than a certain threshold, consider it a match
-            if (maxValue >= THRESHOLD)
-            {
-                // Calculate the center of the found image
-                Point center = new Point(maxLoc.X + template.Width / 4, maxLoc.Y + template.Height / 4);
-
-                File.Delete(tempScreenshotPath);
-                return center;
-            }
-            else
-            {
-                // Clean up temporary files
-                File.Delete(tempScreenshotPath);
-                return null;
-            }
+            File.Delete(tempScreenshotPath);
+            return center;
+        }
+        else
+        {
+            // Clean up temporary files
+            File.Delete(tempScreenshotPath);
+            return null;
         }
     }
 }

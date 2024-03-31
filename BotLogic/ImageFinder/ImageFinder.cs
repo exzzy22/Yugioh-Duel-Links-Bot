@@ -68,8 +68,11 @@ public class ImageFinder : IImageFinder
             const double threshold = 0.8;
             if (maxValue >= threshold)
             {
+                // Calculate the center of the found image
+                Point center = new Point(maxLoc.X + template.Width / 4, maxLoc.Y + template.Height / 4);
+
                 // Simulate a mouse click on the target area
-                _mouseSimulator.SimulateMouseClick(maxLoc, _helpers.GetWindowHandle(processName));
+                _mouseSimulator.SimulateMouseClick(center, _helpers.GetWindowHandle(processName));
                 File.Delete(tempScreenshotPath);
                 return true;
             }

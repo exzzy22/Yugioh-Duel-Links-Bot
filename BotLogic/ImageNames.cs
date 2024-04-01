@@ -18,7 +18,8 @@ public static class ImageNames
             new Duelist { Name = "Ashley", ImagePaths = new List<string>
                 {
                     "Duelists\\Ashley_001.png",
-                    "Duelists\\Ashley_002.png"
+                    "Duelists\\Ashley_002.png",
+                    "Duelists\\Ashley_003.png",
                 }
             },
             new Duelist { Name = "Bella", ImagePaths = new List<string>
@@ -77,6 +78,7 @@ public static class ImageNames
             new Duelist { Name = "Mickey", ImagePaths = new List<string> 
                 { 
                     "Duelists\\Mickey_001.png",
+                    "Duelists\\Mickey_002.png",
                 }
             },
             new Duelist { Name = "Mimi Imimi", ImagePaths = new List<string>
@@ -87,6 +89,11 @@ public static class ImageNames
             new Duelist { Name = "Nick", ImagePaths = new List<string> 
                 { 
                     "Duelists\\Nick_001.png",
+                }
+            },
+            new Duelist { Name = "Luke Kallister", ImagePaths = new List<string>
+                {
+                    "Duelists\\Luke_Kallister_001.png",
                 }
             },
             new Duelist { Name = "Saburamen", ImagePaths = new List<string>

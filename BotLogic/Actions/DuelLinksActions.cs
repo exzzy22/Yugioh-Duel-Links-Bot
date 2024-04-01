@@ -1,7 +1,6 @@
 ﻿using BotLogic.ImageFinder;
 using BotLogic.MouseSimulator;
 using ScreenCapture.Helpers;
-using System.Collections.ObjectModel;
 using System.Drawing;
 
 namespace BotLogic.Actions;
@@ -68,20 +67,21 @@ public class DuelLinksActions : IActions
 
     public List<Point> GetAllAvalivableDuelistsOnScreen()
     {
-        ReadOnlyCollection<string> duelists = ImageNames.Duelists.GetAllDuelists();
+        List<Point> points = [];
 
-        List<Point> points = new();
+        foreach (var duelist in ImageNames.Duelists.GetAllDuelists())
+        {
+            foreach (var image in duelist.ImagePaths)
+            {
+                Point? point = _imageFinder.GetImageLocation(image, ProcessNames.DUEL_LINKS);
 
-        foreach (var duelist in duelists)
-        { 
-            Point? point = _imageFinder.GetImageLocation(duelist, ProcessNames.DUEL_LINKS);
-
-            if (point.HasValue)
-            { 
-                points.Add(point.Value);
+                if (point.HasValue)
+                {
+                    points.Add(point.Value);
+                    break;
+                }
             }
         }
-
         return points;
     }
 }

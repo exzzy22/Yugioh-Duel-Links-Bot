@@ -70,4 +70,53 @@ public class ImageFinder : IImageFinder
             return null;
         }
     }
+
+    public bool DoesImageExists(string imageName, string processName)
+    {
+        Image? screenShoot = _screenCapturer.GetBitmapScreenshot(processName);
+
+        Assembly? assembly = Assembly.GetEntryAssembly();
+
+        if (screenShoot is null || assembly is null)
+            return false;
+
+        string? assemblyPath = Path.GetDirectoryName(assembly.Location);
+
+        if (assemblyPath is null)
+            return false;
+
+        string imagePath = Path.Combine(assemblyPath, IMAGES_FOLDER_NAME, imageName);
+
+        // Save the screenshot temporarily
+        string tempScreenshotPath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
+        screenShoot.Save(tempScreenshotPath);
+
+        Mat img = CvInvoke.Imread(tempScreenshotPath, ImreadModes.Grayscale);
+        Mat template = CvInvoke.Imread(imagePath, ImreadModes.Grayscale);
+        Size size = template.Size;
+
+        Mat img2 = img.Clone();
+
+        Mat result = new Mat();
+        CvInvoke.MatchTemplate(img2, template, result, TemplateMatchingType.SqdiffNormed);
+
+        double minVal = 0, maxVal = 0;
+        Point minLoc = new();
+        Point maxLoc = new();
+        CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
+
+        Rectangle rect = new Rectangle(minLoc, size);
+
+        if (maxVal >= MAX_TRESHOLD && minVal <= MIN_TRESHOLD)
+        {
+            File.Delete(tempScreenshotPath);
+            return true;
+        }
+        else
+        {
+            // Clean up temporary files
+            File.Delete(tempScreenshotPath);
+            return false;
+        }
+    }
 }

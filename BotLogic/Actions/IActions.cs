@@ -7,8 +7,15 @@ public interface IActions
 {
     public void ClickDuelist(Point point);
     public void ClickDuelistDialogUntilDissapers();
-    public bool StartAutoDuel();
+    public void StartAutoDuel();
     public void MoveScreenRight();
     public void MoveScreenLeft();
     List<DuelistPoint> GetAllAvalivableDuelistsOnScreen();
+    /// <summary>
+    /// Click all dialogs that appear after a duel until home screen appears
+    /// </summary>
+    /// <returns></returns>
+    public void ClickAfterDuelDialogs();
+    public bool IsOnHomepage();
+    public bool IsDuelOver();
 }

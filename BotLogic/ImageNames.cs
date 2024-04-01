@@ -8,6 +8,36 @@ public static class ImageNames
     public const string RIGHT_ARROW = "RightArrow.png";
     public const string DIALOG_NEXT = "Dialog_Next.png";
     public const string AUTO_DUEL = "Auto-Duel.png";
+    public const string MATCHOVER_OK = "MatchOver_OK.png";
+    public const string MATCHOVER_NEXT = "MatchOver_Next.png";
+    public const string MATCHOVER_DIALOG_OK = "Dialog_OK.png";
+    public const string MATCHOVER_DIALOG_OK_2 = "Dialog_OK_2.png";
+    public const string DUEL_STUDIO = "DuelStudio.png";
+    public const string GATE = "Gate.png";
+    public const string PVP_ARENA = "PvPArena.png";
+    public const string SHOP = "Shop.png";
+
+    public static List<string> MatchOverImages()
+    {
+        return new List<string>
+        {
+            MATCHOVER_NEXT,
+            MATCHOVER_OK,
+            MATCHOVER_DIALOG_OK,
+            MATCHOVER_DIALOG_OK_2
+        };
+    }
+
+    public static List<string> HomepageImages()
+    {
+        return new List<string>
+        {
+            DUEL_STUDIO,
+            GATE,
+            PVP_ARENA,
+            SHOP
+        };
+    }
 
     public static class Duelists
     {
@@ -20,6 +50,7 @@ public static class ImageNames
                     "Duelists\\Ashley_001.png",
                     "Duelists\\Ashley_002.png",
                     "Duelists\\Ashley_003.png",
+                    "Duelists\\Ashley_004.png",
                 }
             },
             new Duelist { Name = "Bella", ImagePaths = new List<string>
@@ -43,6 +74,7 @@ public static class ImageNames
                     "Duelists\\David_001.png",
                     "Duelists\\David_002.png",
                     "Duelists\\David_003.png",
+                    "Duelists\\David_004.png",
                 }
             },
             new Duelist { Name = "Emma", ImagePaths = new List<string>
@@ -54,18 +86,21 @@ public static class ImageNames
             new Duelist { Name = "Gavin Sogetsu", ImagePaths = new List<string>
                 { 
                     "Duelists\\Gavin_Sogetsu_001.png",
+                    "Duelists\\Gavin_Sogetsu_002.png",
                 }
             },
             new Duelist { Name = "Goha Soldier", ImagePaths = new List<string>
                 {
                     "Duelists\\Goha_Solider_001.png",
                     "Duelists\\Goha_Solider_002.png",
+                    "Duelists\\Goha_Solider_003.png",
                 }
             },
             new Duelist { Name = "Jay", ImagePaths = new List<string>
                 {
                     "Duelists\\Jay_001.png",
                     "Duelists\\Jay_002.png",
+                    "Duelists\\Jay_003.png",
                 }
             },
             new Duelist { Name = "Meg", ImagePaths = new List<string>
@@ -89,6 +124,7 @@ public static class ImageNames
             new Duelist { Name = "Nick", ImagePaths = new List<string> 
                 { 
                     "Duelists\\Nick_001.png",
+                    "Duelists\\Nick_002.png",
                 }
             },
             new Duelist { Name = "Luke Kallister", ImagePaths = new List<string>
@@ -100,12 +136,14 @@ public static class ImageNames
                 {
                     "Duelists\\Saburamen_001.png",
                     "Duelists\\Saburamen_002.png",
+                    "Duelists\\Saburamen_003.png",
                 }
             },
             new Duelist { Name = "Vagabond", ImagePaths = new List<string>
                 {
                     "Duelists\\Vagabond_001.png",
                     "Duelists\\Vagabond_002.png",
+                    "Duelists\\Vagabond_003.png",
                 }
             },
             new Duelist { Name = "Yosh Imimi", ImagePaths = new List<string>

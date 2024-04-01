@@ -36,18 +36,16 @@ public class DuelLinksActions : IActions
         }
     }
 
-    public bool StartAutoDuel()
+    public void StartAutoDuel()
     { 
         Point? autoDialog = _imageFinder.GetImageLocation(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS);
 
-        if (autoDialog.HasValue)
-        { 
-            _mouseSimulator.SimulateMouseClick(autoDialog.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
-
-            return true;
+        while (!autoDialog.HasValue)
+        {
+            autoDialog = _imageFinder.GetImageLocation(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS);
         }
 
-        return false;
+        _mouseSimulator.SimulateMouseClick(autoDialog.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 
     public void MoveScreenLeft()
@@ -89,4 +87,42 @@ public class DuelLinksActions : IActions
         }
         return points;
     }
+
+    public void ClickAfterDuelDialogs()
+    {
+        bool homepageexists = false;
+
+
+        while (!homepageexists)
+        {
+            foreach (var image in ImageNames.MatchOverImages())
+            {
+                Point? point = _imageFinder.GetImageLocation(image, ProcessNames.DUEL_LINKS);
+
+                if (point.HasValue)
+                {
+                    _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+                }
+
+                Thread.Sleep(1000);
+            }
+
+            homepageexists = IsOnHomepage();
+        }
+    }
+
+    public bool IsOnHomepage()
+    {
+        foreach (var image in ImageNames.HomepageImages())
+        {
+            if (_imageFinder.DoesImageExists(image, ProcessNames.DUEL_LINKS))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool IsDuelOver() => _imageFinder.DoesImageExists(ImageNames.MATCHOVER_OK, ProcessNames.DUEL_LINKS);
 }

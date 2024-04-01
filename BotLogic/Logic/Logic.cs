@@ -18,8 +18,20 @@ public class Logic : ILogic
         foreach (var duelist in duelists)
         {
             _actions.ClickDuelist(duelist.Point);
+            Thread.Sleep(8000);
             _actions.ClickDuelistDialogUntilDissapers();
+            Thread.Sleep(4000);
             _actions.StartAutoDuel();
+
+            bool isDuelOver = false;
+
+            while (!isDuelOver)
+            { 
+                Thread.Sleep(15000);
+                isDuelOver = _actions.IsDuelOver();
+            }
+
+            _actions.ClickAfterDuelDialogs();
         }
     }
 }

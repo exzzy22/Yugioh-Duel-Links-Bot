@@ -1,5 +1,6 @@
 using BotLogic.Actions;
 using BotLogic.ImageFinder;
+using BotLogic.Logic;
 using BotLogic.MouseSimulator;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,6 +30,7 @@ internal static class Program
     {
         return Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) => {
+                services.AddTransient<ILogic, Logic>();
                 services.AddTransient<IActions, DuelLinksActions>();
                 services.AddTransient<IImageFinder, ImageFinder>();
                 services.AddTransient<IMouseSimulator, MouseSimulator>();

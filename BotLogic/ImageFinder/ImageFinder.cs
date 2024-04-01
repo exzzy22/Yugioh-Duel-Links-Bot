@@ -9,7 +9,7 @@ namespace BotLogic.ImageFinder;
 public class ImageFinder : IImageFinder
 {
     private const string IMAGES_FOLDER_NAME = "Images";
-    private const double MAX_TRESHOLD = 1;
+    private const double MAX_TRESHOLD = 0.9;
     private const double MIN_TRESHOLD = 0.001;
 
     private readonly IScreenCapturer _screenCapturer;

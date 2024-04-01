@@ -1,4 +1,5 @@
 ﻿using BotLogic.ImageFinder;
+using BotLogic.Models;
 using BotLogic.MouseSimulator;
 using ScreenCapture.Helpers;
 using System.Drawing;
@@ -35,14 +36,18 @@ public class DuelLinksActions : IActions
         }
     }
 
-    public void StartAutoDuel()
+    public bool StartAutoDuel()
     { 
         Point? autoDialog = _imageFinder.GetImageLocation(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS);
 
         if (autoDialog.HasValue)
         { 
             _mouseSimulator.SimulateMouseClick(autoDialog.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+
+            return true;
         }
+
+        return false;
     }
 
     public void MoveScreenLeft()
@@ -65,9 +70,9 @@ public class DuelLinksActions : IActions
         }
     }
 
-    public List<Point> GetAllAvalivableDuelistsOnScreen()
+    public List<DuelistPoint> GetAllAvalivableDuelistsOnScreen()
     {
-        List<Point> points = [];
+        List<DuelistPoint> points = [];
 
         foreach (var duelist in ImageNames.Duelists.GetAllDuelists())
         {
@@ -77,7 +82,7 @@ public class DuelLinksActions : IActions
 
                 if (point.HasValue)
                 {
-                    points.Add(point.Value);
+                    points.Add(new DuelistPoint { Duelist = duelist, Point = point.Value});
                     break;
                 }
             }

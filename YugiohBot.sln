@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{19F54B66-DDF7-4269-90EA-CCC0608EADB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "UI\UI.csproj", "{19F54B66-DDF7-4269-90EA-CCC0608EADB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenCapture", "ScreenCapture\ScreenCapture.csproj", "{6422B0AD-0A20-4697-B258-5BB0A18B3DA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScreenCapture", "ScreenCapture\ScreenCapture.csproj", "{6422B0AD-0A20-4697-B258-5BB0A18B3DA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotLogic", "BotLogic\BotLogic.csproj", "{22D39E3E-FD7D-411F-BEC1-4710963B14BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BotLogic", "BotLogic\BotLogic.csproj", "{22D39E3E-FD7D-411F-BEC1-4710963B14BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLDetection", "MLDetection\MLDetection.csproj", "{C602118C-AA2D-4A39-A715-73A4D05A5B07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{22D39E3E-FD7D-411F-BEC1-4710963B14BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22D39E3E-FD7D-411F-BEC1-4710963B14BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22D39E3E-FD7D-411F-BEC1-4710963B14BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C602118C-AA2D-4A39-A715-73A4D05A5B07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C602118C-AA2D-4A39-A715-73A4D05A5B07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C602118C-AA2D-4A39-A715-73A4D05A5B07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C602118C-AA2D-4A39-A715-73A4D05A5B07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,8 +1,9 @@
 using BotLogic.Logic;
+using Serilog;
 
 namespace UI;
 
-public partial class MainForm: Form
+public partial class MainForm : Form
 {
     private readonly ILogic _logic;
     public MainForm(ILogic logic)
@@ -11,10 +12,15 @@ public partial class MainForm: Form
         _logic = logic;
     }
 
-    private void StartStopButton_Click(object sender, EventArgs e)
+    private async void StartStopButton_Click(object sender, EventArgs e)
     {
-        CancellationTokenSource cts = new ();
+        CancellationTokenSource cts = new();
 
-        _logic.StartDuelWorldLoop(cts.Token);
+        await _logic.StartDuelWorldLoop(cts.Token);
+    }
+
+    private void richTextBox_TextChanged(object sender, EventArgs e)
+    {
+
     }
 }

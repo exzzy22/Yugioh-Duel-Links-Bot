@@ -6,7 +6,7 @@ namespace MLDetection;
 
 public class ConsumeModel : IConsumeModel
 {
-    private const float THRESHOLD = 0.8f;
+    private const float THRESHOLD = 0.9f;
 
     public List<Point> GetObjects(string imagePath, string tagName)
     {

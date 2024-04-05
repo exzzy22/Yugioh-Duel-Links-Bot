@@ -8,6 +8,10 @@ using MLDetection;
 using ScreenCapture;
 using ScreenCapture.Helpers;
 using ScreenCapture.Windows;
+using Serilog;
+using Serilog.Core;
+using Serilog.Formatting.Display;
+using Serilog.Sinks.WinForms.Base;
 
 namespace UI;
 
@@ -39,6 +43,15 @@ internal static class Program
                 services.AddTransient<IHelpers, Helpers>();
                 services.AddTransient<IConsumeModel, ConsumeModel>();
                 services.AddTransient<MainForm>();
+                services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(GetLogger(), true));
             });
+    }
+
+    private static Logger GetLogger()
+    {
+        return new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteToSimpleAndRichTextBox(new MessageTemplateTextFormatter("{Timestamp} [{Level}] {Message} {Exception}\n"))
+            .CreateLogger();
     }
 }

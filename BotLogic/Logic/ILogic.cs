@@ -2,5 +2,5 @@
 
 public interface ILogic
 {
-    void StartDuelWorldLoop(CancellationToken cancellationToken);
+    Task StartDuelWorldLoop(CancellationToken cancellationToken);
 }

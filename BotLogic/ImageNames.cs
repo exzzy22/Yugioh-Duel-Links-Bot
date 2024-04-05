@@ -22,7 +22,8 @@ public static class ImageNames
             MATCHOVER_NEXT,
             MATCHOVER_OK,
             MATCHOVER_DIALOG_OK,
-            MATCHOVER_DIALOG_OK_2
+            MATCHOVER_DIALOG_OK_2,
+            DIALOG_NEXT,
         };
     }
 

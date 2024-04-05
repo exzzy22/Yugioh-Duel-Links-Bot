@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
+using Microsoft.Extensions.Logging;
 using MLDetection;
 using ScreenCapture;
 using System.Drawing;
@@ -15,11 +16,13 @@ public class ImageFinder : IImageFinder
 
     private readonly IScreenCapturer _screenCapturer;
     private readonly IConsumeModel _consumeModel;
+    private readonly ILogger<ImageFinder> _logger;
 
-    public ImageFinder(IScreenCapturer screenCapturer, IConsumeModel consumeModel)
+    public ImageFinder(IScreenCapturer screenCapturer, IConsumeModel consumeModel, ILogger<ImageFinder> logger)
     {
         _screenCapturer = screenCapturer;
         _consumeModel = consumeModel;
+        _logger = logger;
     }
 
     public List<Point> GetImagesLocationsML(string tagName, string processName)

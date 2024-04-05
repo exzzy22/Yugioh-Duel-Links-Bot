@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             StartStopButton = new Button();
+            richTextBoxLogControl = new Serilog.Sinks.WinForms.Core.RichTextBoxLogControl();
             SuspendLayout();
             // 
             // StartStopButton
@@ -41,11 +42,22 @@
             StartStopButton.UseVisualStyleBackColor = true;
             StartStopButton.Click += StartStopButton_Click;
             // 
+            // richTextBoxLogControl
+            // 
+            richTextBoxLogControl.ForContext = "";
+            richTextBoxLogControl.Location = new Point(12, 177);
+            richTextBoxLogControl.Name = "richTextBoxLogControl";
+            richTextBoxLogControl.ReadOnly = true;
+            richTextBoxLogControl.Size = new Size(1144, 594);
+            richTextBoxLogControl.TabIndex = 1;
+            richTextBoxLogControl.Text = "";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1168, 783);
+            Controls.Add(richTextBoxLogControl);
             Controls.Add(StartStopButton);
             Name = "MainForm";
             Text = "MainForm";
@@ -55,5 +67,6 @@
         #endregion
 
         private Button StartStopButton;
+        private Serilog.Sinks.WinForms.Core.RichTextBoxLogControl richTextBoxLogControl;
     }
 }

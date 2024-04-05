@@ -1,37 +1,54 @@
 ﻿using BotLogic.Actions;
+using Microsoft.Extensions.Logging;
 
 namespace BotLogic.Logic;
 
 public class Logic : ILogic
 {
     private readonly IActions _actions;
+    private readonly ILogger<Logic> _logger;
 
-    public Logic(IActions actions)
+    public Logic(IActions actions, ILogger<Logic> logger)
     {
         _actions = actions;
+        _logger = logger;
+
     }
 
-    public void StartDuelWorldLoop(CancellationToken cancellationToken)
+    public async Task StartDuelWorldLoop(CancellationToken cancellationToken)
     {
-        var points = _actions.GetAllWorldDuelistsOnScreen();
-
-        foreach (var point in points)
+        while (!cancellationToken.IsCancellationRequested)
         {
-            _actions.ClickDuelist(point);
-            Thread.Sleep(8000);
-            _actions.ClickDuelistDialogUntilDissapers();
-            Thread.Sleep(4000);
-            _actions.StartAutoDuel();
+            var points = _actions.GetAllWorldDuelistsOnScreen();
 
-            bool isDuelOver = false;
+            _logger.LogInformation($"Found {points.Count} Duelists");
 
-            while (!isDuelOver)
-            { 
-                Thread.Sleep(15000);
-                isDuelOver = _actions.IsDuelOver();
+            if (!points.Any())
+            {
+                _actions.MoveScreenRight();
+                await Task.Delay(4000, cancellationToken);
+                continue;
             }
 
-            _actions.ClickAfterDuelDialogs();
+            foreach (var point in points)
+            {
+                _logger.LogInformation("Click Duelist");
+                _actions.ClickDuelist(point);
+                await Task.Delay(4000, cancellationToken);
+                _actions.ClickDuelistDialogUntilDissapers();
+                await Task.Delay(3000, cancellationToken);
+                _actions.StartAutoDuel();
+
+                while (!_actions.IsDuelOver())
+                {
+                    await Task.Delay(10000, cancellationToken);
+                }
+
+                _logger.LogInformation("Duel Over");
+
+                _actions.ClickAfterDuelDialogs();
+            }
         }
     }
+
 }

@@ -4,6 +4,7 @@ namespace BotLogic.ImageFinder;
 
 public interface IImageFinder
 {
-    Point? GetImageLocation(string imageName, string processName);
-    bool DoesImageExists(string imageName, string processName);
+    List<Point> GetImagesLocationsML(string tagName, string processName);
+    Point? GetImageLocationCV(string imageName, string processName);
+    bool DoesImageExistsCV(string imageName, string processName);
 }

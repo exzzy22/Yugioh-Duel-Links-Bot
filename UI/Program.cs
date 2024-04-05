@@ -4,6 +4,7 @@ using BotLogic.Logic;
 using BotLogic.MouseSimulator;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MLDetection;
 using ScreenCapture;
 using ScreenCapture.Helpers;
 using ScreenCapture.Windows;
@@ -36,6 +37,7 @@ internal static class Program
                 services.AddTransient<IMouseSimulator, MouseSimulator>();
                 services.AddTransient<IScreenCapturer, WindowsScreenCapturer>();
                 services.AddTransient<IHelpers, Helpers>();
+                services.AddTransient<IConsumeModel, ConsumeModel>();
                 services.AddTransient<MainForm>();
             });
     }

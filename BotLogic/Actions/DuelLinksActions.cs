@@ -1,6 +1,6 @@
 ﻿using BotLogic.ImageFinder;
-using BotLogic.Models;
 using BotLogic.MouseSimulator;
+using MLDetection;
 using ScreenCapture.Helpers;
 using System.Drawing;
 
@@ -26,23 +26,23 @@ public class DuelLinksActions : IActions
 
     public void ClickDuelistDialogUntilDissapers()
     {
-        Point? dialogLocation = _imageFinder.GetImageLocation(ImageNames.DIALOG_NEXT, ProcessNames.DUEL_LINKS);
+        Point? dialogLocation = _imageFinder.GetImageLocationCV(ImageNames.DIALOG_NEXT, ProcessNames.DUEL_LINKS);
 
         while (dialogLocation.HasValue)
         {
             _mouseSimulator.SimulateMouseClick(dialogLocation.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
             Thread.Sleep(6000);
-            dialogLocation = _imageFinder.GetImageLocation(ImageNames.DIALOG_NEXT, ProcessNames.DUEL_LINKS);
+            dialogLocation = _imageFinder.GetImageLocationCV(ImageNames.DIALOG_NEXT, ProcessNames.DUEL_LINKS);
         }
     }
 
     public void StartAutoDuel()
     { 
-        Point? autoDialog = _imageFinder.GetImageLocation(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS);
+        Point? autoDialog = _imageFinder.GetImageLocationCV(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS);
 
         while (!autoDialog.HasValue)
         {
-            autoDialog = _imageFinder.GetImageLocation(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS);
+            autoDialog = _imageFinder.GetImageLocationCV(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS);
         }
 
         _mouseSimulator.SimulateMouseClick(autoDialog.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
@@ -50,7 +50,7 @@ public class DuelLinksActions : IActions
 
     public void MoveScreenLeft()
     { 
-        Point? point = _imageFinder.GetImageLocation(ImageNames.LEFT_ARROW, ProcessNames.DUEL_LINKS);
+        Point? point = _imageFinder.GetImageLocationCV(ImageNames.LEFT_ARROW, ProcessNames.DUEL_LINKS);
 
         if (point.HasValue)
         {
@@ -60,7 +60,7 @@ public class DuelLinksActions : IActions
 
     public void MoveScreenRight()
     { 
-        Point? point = _imageFinder.GetImageLocation(ImageNames.RIGHT_ARROW, ProcessNames.DUEL_LINKS);
+        Point? point = _imageFinder.GetImageLocationCV(ImageNames.RIGHT_ARROW, ProcessNames.DUEL_LINKS);
 
         if (point.HasValue)
         {
@@ -68,25 +68,7 @@ public class DuelLinksActions : IActions
         }
     }
 
-    public List<DuelistPoint> GetAllAvalivableDuelistsOnScreen()
-    {
-        List<DuelistPoint> points = [];
-
-        foreach (var duelist in ImageNames.Duelists.GetAllDuelists())
-        {
-            foreach (var image in duelist.ImagePaths)
-            {
-                Point? point = _imageFinder.GetImageLocation(image, ProcessNames.DUEL_LINKS);
-
-                if (point.HasValue)
-                {
-                    points.Add(new DuelistPoint { Duelist = duelist, Point = point.Value});
-                    break;
-                }
-            }
-        }
-        return points;
-    }
+    public List<Point> GetAllWorldDuelistsOnScreen() => _imageFinder.GetImagesLocationsML(Tags.WORLD_DUELIST, ProcessNames.DUEL_LINKS);
 
     public void ClickAfterDuelDialogs()
     {
@@ -97,7 +79,7 @@ public class DuelLinksActions : IActions
         {
             foreach (var image in ImageNames.MatchOverImages())
             {
-                Point? point = _imageFinder.GetImageLocation(image, ProcessNames.DUEL_LINKS);
+                Point? point = _imageFinder.GetImageLocationCV(image, ProcessNames.DUEL_LINKS);
 
                 if (point.HasValue)
                 {
@@ -115,7 +97,7 @@ public class DuelLinksActions : IActions
     {
         foreach (var image in ImageNames.HomepageImages())
         {
-            if (_imageFinder.DoesImageExists(image, ProcessNames.DUEL_LINKS))
+            if (_imageFinder.DoesImageExistsCV(image, ProcessNames.DUEL_LINKS))
             {
                 return true;
             }
@@ -124,5 +106,5 @@ public class DuelLinksActions : IActions
         return false;
     }
 
-    public bool IsDuelOver() => _imageFinder.DoesImageExists(ImageNames.MATCHOVER_OK, ProcessNames.DUEL_LINKS);
+    public bool IsDuelOver() => _imageFinder.DoesImageExistsCV(ImageNames.MATCHOVER_OK, ProcessNames.DUEL_LINKS);
 }

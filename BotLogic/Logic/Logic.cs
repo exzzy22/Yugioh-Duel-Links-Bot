@@ -13,11 +13,11 @@ public class Logic : ILogic
 
     public void StartDuelWorldLoop(CancellationToken cancellationToken)
     {
-        var duelists = _actions.GetAllAvalivableDuelistsOnScreen();
+        var points = _actions.GetAllWorldDuelistsOnScreen();
 
-        foreach (var duelist in duelists)
+        foreach (var point in points)
         {
-            _actions.ClickDuelist(duelist.Point);
+            _actions.ClickDuelist(point);
             Thread.Sleep(8000);
             _actions.ClickDuelistDialogUntilDissapers();
             Thread.Sleep(4000);

@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
+using MLDetection;
 using ScreenCapture;
 using System.Drawing;
 using System.Reflection;
@@ -10,50 +11,34 @@ public class ImageFinder : IImageFinder
 {
     private const string IMAGES_FOLDER_NAME = "Images";
     private const double MAX_TRESHOLD = 0.9;
-    private const double MIN_TRESHOLD = 0.001;
+    private const double MIN_TRESHOLD = 0.005;
 
     private readonly IScreenCapturer _screenCapturer;
+    private readonly IConsumeModel _consumeModel;
 
-    public ImageFinder(IScreenCapturer screenCapturer)
+    public ImageFinder(IScreenCapturer screenCapturer, IConsumeModel consumeModel)
     {
         _screenCapturer = screenCapturer;
+        _consumeModel = consumeModel;
     }
 
-    public Point? GetImageLocation(string imageName, string processName)
+    public List<Point> GetImagesLocationsML(string tagName, string processName)
     {
-        Image? screenShoot = _screenCapturer.GetBitmapScreenshot(processName);
+        string tempScreenshotPath = CreateScreenshot(processName);
 
-        Assembly? assembly = Assembly.GetEntryAssembly();
+        List<Point> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tagName);
 
-        if (screenShoot is null || assembly is null)
-            return null;
+        File.Delete(tempScreenshotPath);
 
-        string? assemblyPath = Path.GetDirectoryName(assembly.Location);
+        return ocbjectPoints;
+    }
 
-        if (assemblyPath is null)
-            return null;
+    public Point? GetImageLocationCV(string imageName, string processName)
+    {
+        string tempScreenshotPath = CreateScreenshot(processName);
+        string imagePath = GetImagePath(imageName);
 
-        string imagePath = Path.Combine(assemblyPath, IMAGES_FOLDER_NAME, imageName);
-
-        // Save the screenshot temporarily
-        string tempScreenshotPath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
-        screenShoot.Save(tempScreenshotPath);
-
-        Mat img = CvInvoke.Imread(tempScreenshotPath, ImreadModes.Grayscale);
-        Mat template = CvInvoke.Imread(imagePath, ImreadModes.Grayscale);
-        Size size = template.Size;
-
-        Mat img2 = img.Clone();
-
-        Mat result = new Mat();
-        CvInvoke.MatchTemplate(img2, template, result, TemplateMatchingType.SqdiffNormed);
-
-        double minVal = 0, maxVal = 0;
-        Point minLoc = new ();
-        Point maxLoc = new ();
-        CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
-
-        Rectangle rect = new Rectangle(minLoc, size);
+        var (rect, minVal, maxVal) = FindTemplateMatch(tempScreenshotPath, imagePath);
 
         if (maxVal >= MAX_TRESHOLD && minVal <= MIN_TRESHOLD)
         {
@@ -71,41 +56,12 @@ public class ImageFinder : IImageFinder
         }
     }
 
-    public bool DoesImageExists(string imageName, string processName)
+    public bool DoesImageExistsCV(string imageName, string processName)
     {
-        Image? screenShoot = _screenCapturer.GetBitmapScreenshot(processName);
+        string tempScreenshotPath = CreateScreenshot(processName);
+        string imagePath = GetImagePath(imageName);
 
-        Assembly? assembly = Assembly.GetEntryAssembly();
-
-        if (screenShoot is null || assembly is null)
-            return false;
-
-        string? assemblyPath = Path.GetDirectoryName(assembly.Location);
-
-        if (assemblyPath is null)
-            return false;
-
-        string imagePath = Path.Combine(assemblyPath, IMAGES_FOLDER_NAME, imageName);
-
-        // Save the screenshot temporarily
-        string tempScreenshotPath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
-        screenShoot.Save(tempScreenshotPath);
-
-        Mat img = CvInvoke.Imread(tempScreenshotPath, ImreadModes.Grayscale);
-        Mat template = CvInvoke.Imread(imagePath, ImreadModes.Grayscale);
-        Size size = template.Size;
-
-        Mat img2 = img.Clone();
-
-        Mat result = new Mat();
-        CvInvoke.MatchTemplate(img2, template, result, TemplateMatchingType.SqdiffNormed);
-
-        double minVal = 0, maxVal = 0;
-        Point minLoc = new();
-        Point maxLoc = new();
-        CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
-
-        Rectangle rect = new Rectangle(minLoc, size);
+        var (_, minVal, maxVal) = FindTemplateMatch(tempScreenshotPath, imagePath);
 
         if (maxVal >= MAX_TRESHOLD && minVal <= MIN_TRESHOLD)
         {
@@ -118,5 +74,42 @@ public class ImageFinder : IImageFinder
             File.Delete(tempScreenshotPath);
             return false;
         }
+    }
+
+    private (Rectangle rectangle, double minVal, double maxVal) FindTemplateMatch(string tempScreenshotPath, string imagePath)
+    {
+        Mat img = CvInvoke.Imread(tempScreenshotPath, ImreadModes.Grayscale);
+        Mat template = CvInvoke.Imread(imagePath, ImreadModes.Grayscale);
+        Size size = template.Size;
+
+        Mat result = new();
+        CvInvoke.MatchTemplate(img, template, result, TemplateMatchingType.SqdiffNormed);
+
+        double minVal = 0, maxVal = 0;
+        Point minLoc = new(), maxLoc = new();
+        CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
+
+        Rectangle rect = new Rectangle(minLoc, size);
+
+        return (rect, minVal, maxVal);
+    }
+
+    private string GetImagePath(string imageName)
+    {
+        Assembly assembly = Assembly.GetEntryAssembly() ?? throw new InvalidOperationException("Failed to get assembly.");
+        string assemblyPath = Path.GetDirectoryName(assembly.Location) ?? throw new InvalidOperationException("Failed to get assembly path.");
+        string imagePath = Path.Combine(assemblyPath, IMAGES_FOLDER_NAME, imageName);
+
+        return imagePath; ;
+    }
+
+    private string CreateScreenshot(string processName)
+    {
+        Image screenShoot = _screenCapturer.GetBitmapScreenshot(processName) ?? throw new InvalidOperationException("Failed to capture screenshot.");
+
+        string tempScreenshotPath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
+        screenShoot.Save(tempScreenshotPath);
+
+        return tempScreenshotPath;
     }
 }

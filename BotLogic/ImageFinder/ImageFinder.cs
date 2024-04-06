@@ -2,6 +2,7 @@
 using Emgu.CV.CvEnum;
 using Microsoft.Extensions.Logging;
 using MLDetection;
+using MLDetection.Models;
 using ScreenCapture;
 using System.Drawing;
 using System.Reflection;
@@ -25,11 +26,11 @@ public class ImageFinder : IImageFinder
         _logger = logger;
     }
 
-    public List<Point> GetImagesLocationsML(string tagName, string processName)
+    public List<ObjectPoint> GetImagesLocationsML(string processName)
     {
         string tempScreenshotPath = CreateScreenshot(processName);
 
-        List<Point> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tagName);
+        List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath);
 
         File.Delete(tempScreenshotPath);
 

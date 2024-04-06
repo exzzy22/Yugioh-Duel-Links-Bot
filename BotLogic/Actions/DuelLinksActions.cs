@@ -87,7 +87,12 @@ public class DuelLinksActions : IActions
     {
         _logger.LogInformation("Get all world duelists on screen");
 
-        return _imageFinder.GetImagesLocationsML(Tags.WORLD_DUELIST, ProcessNames.DUEL_LINKS);
+        List<Point> worldDuelists = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS)
+            .Where(i => i.Tag.Equals(Tags.WORLD_DUELIST))
+            .Select(i => i.Point)
+            .ToList();
+
+        return worldDuelists;
     }
 
     public void ClickAfterDuelDialogs()

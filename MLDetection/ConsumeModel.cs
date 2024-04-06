@@ -6,37 +6,45 @@ namespace MLDetection;
 
 public class ConsumeModel : IConsumeModel
 {
-    private const float THRESHOLD = 0.9f;
-
-    public List<Point> GetObjects(string imagePath, string tagName)
+    public List<ObjectPoint> GetObjects(string imagePath)
     {
         var image = MLImage.CreateFromFile(imagePath);
         ModelInput sampleData = new ModelInput()
         {
             Image = image,
-            Labels = [tagName],
         };
 
         ModelOutput predictionResult = MLModelConsumption.Predict(sampleData);
 
         if (predictionResult is null
             || predictionResult.PredictedBoundingBoxes is null
-            || predictionResult.Score is null)
+            || predictionResult.Score is null
+            || predictionResult.PredictedLabel is null)
         {
-            return new List<Point>();
+            return new List<ObjectPoint>();
         }
 
-        List<Point> middlePoints = new ();
+        List<ObjectPoint> middlePoints = new ();
 
-        var boxes = predictionResult.PredictedBoundingBoxes.Chunk(4)
-                        .Select(x => new { XTop = x[0], YTop = x[1], XBottom = x[2], YBottom = x[3] })
-                        .Zip(predictionResult.Score, (a, b) => new { Box = a, Score = b });
-
-        foreach (var item in boxes.Where(x => x.Score > THRESHOLD))
+        // Iterate through predicted labels and bounding boxes simultaneously
+        for (int i = 0; i < predictionResult.PredictedBoundingBoxes.Length; i += 4)
         {
-            int middleX = (int)((item.Box.XTop + item.Box.XBottom) / 2);
-            int middleY = (int)((item.Box.YTop + item.Box.YBottom) / 2);
-            middlePoints.Add(new Point(middleX, middleY));
+            float xTop = predictionResult.PredictedBoundingBoxes[i];
+            float yTop = predictionResult.PredictedBoundingBoxes[i + 1];
+            float xBottom = predictionResult.PredictedBoundingBoxes[i + 2];
+            float yBottom = predictionResult.PredictedBoundingBoxes[i + 3];
+
+            // Get the corresponding label
+            var label = predictionResult.PredictedLabel[i / 4];
+
+            int middleX = (int)((xTop + xBottom) / 2);
+            int middleY = (int)((yTop + yBottom) / 2);
+
+            middlePoints.Add(new ObjectPoint 
+            { 
+                Point = new Point(middleX, middleY),
+                Tag = label 
+            });
         }
 
         return middlePoints;

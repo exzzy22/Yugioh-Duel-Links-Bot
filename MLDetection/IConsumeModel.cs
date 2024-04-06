@@ -1,8 +1,8 @@
-﻿using System.Drawing;
+﻿using MLDetection.Models;
 
 namespace MLDetection;
 
 public interface IConsumeModel
 {
-    List<Point> GetObjects(string imagePath, string tagName);
+    List<ObjectPoint> GetObjects(string imagePath);
 }

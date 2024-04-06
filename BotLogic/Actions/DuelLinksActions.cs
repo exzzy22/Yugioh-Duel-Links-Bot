@@ -172,15 +172,20 @@ public class DuelLinksActions : IActions
 
         while (await timer.WaitForNextTickAsync(cts)) 
         {
-            _logger.LogInformation("Check for network interruption error");
             try
             {
                 Point? point = _imageFinder.GetImageLocationCV(ImageNames.RETRY, ProcessNames.DUEL_LINKS);
 
                 if (point.HasValue)
                 {
+                    _logger.LogInformation("Click network interruption error popup");
                     _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogInformation("Stoping Network Interruption Checker");
+                break;
             }
             catch (Exception ex)
             {

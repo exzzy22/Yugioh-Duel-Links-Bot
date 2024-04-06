@@ -10,10 +10,8 @@ public class WindowsScreenCapturer : IScreenCapturer
     {
         _helpers = helpers;
     }
-    public Image? GetBitmapScreenshot(string processName)
+    public Image GetBitmapScreenshot(string processName)
     {
-        Image? img = null;
-
         nint handle = _helpers.GetWindowHandle(processName);
 
         //Check if window is minimized and show it if needed
@@ -22,24 +20,25 @@ public class WindowsScreenCapturer : IScreenCapturer
 
         User32.SetForegroundWindow(handle);
 
-        //ALT + PRINT SCREEN gets screenshot of focused window
-        //See this article for key list
-        //https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.sendkeys?view=windowsdesktop-6.0#remarks
-        SendKeys.SendWait("%({PRTSC})");
-        Thread.Sleep(600);
+        Thread.Sleep(500); // Give time OS to bring screen to front
 
-        //The GetImage function in WPF gets a bitmapsource image
-        //This could be replaced with the Winforms getimage since that returns an image
-        img = Clipboard.GetImage();
+        if (Screen.PrimaryScreen is null) throw new ArgumentException("Primary screen is null");
 
-        //Uses the user32.dll to make sure the clipboard is empty and closed 
-        //Without this you might get errors that the clipboard is already open
-        nint clipWindow = User32.GetOpenClipboardWindow();
-        User32.OpenClipboard(clipWindow);
-        User32.EmptyClipboard();
-        User32.CloseClipboard();
-        Thread.Sleep(100);
+        // Create a new bitmap object that matches the size of the screen
+        var bmpScreenshot = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
+                                       Screen.PrimaryScreen.Bounds.Height);
 
-        return img;
+        // Create a graphics object from the bitmap
+        var gfxScreenshot = Graphics.FromImage(bmpScreenshot);
+
+        // Take a screenshot of the entire screen
+        gfxScreenshot.CopyFromScreen(Screen.PrimaryScreen.Bounds.X,
+                                     Screen.PrimaryScreen.Bounds.Y,
+                                     0,
+                                     0,
+                                     Screen.PrimaryScreen.Bounds.Size,
+                                     CopyPixelOperation.SourceCopy);
+
+        return bmpScreenshot;
     }
 }

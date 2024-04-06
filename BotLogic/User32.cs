@@ -10,16 +10,7 @@ internal class User32
 
     public static void MoveCursorToPoint(int x, int y, IntPtr? hWnd = null)
     {
-        if (!hWnd.HasValue)
-        {
-            SetCursorPos(x, y);
-            return;
-        }
-
-        Point offsetPoint = new (0, 0);
-        ClientToScreen(hWnd.Value, ref offsetPoint);
-        Point adjustedPoint = new Point(offsetPoint.X + x, offsetPoint.Y + y);
-        SetCursorPos(adjustedPoint.X, adjustedPoint.Y);
+        SetCursorPos(x, y);
     }
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]

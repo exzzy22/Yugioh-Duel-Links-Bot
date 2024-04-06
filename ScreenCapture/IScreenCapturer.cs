@@ -2,5 +2,5 @@
 
 public interface IScreenCapturer
 {
-    Image? GetBitmapScreenshot(string processName);
+    Image GetBitmapScreenshot(string processName);
 }

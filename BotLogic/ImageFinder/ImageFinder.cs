@@ -143,21 +143,7 @@ public class ImageFinder : IImageFinder
 
     private string CreateScreenshot(string processName)
     {
-        int retryCounter = 0;
-        Image? screenShoot = _screenCapturer.GetBitmapScreenshot(processName);
-
-        while (screenShoot is null && retryCounter < 5)
-        {
-            _logger.LogWarning("Failed to take screenshot, retrying");
-            screenShoot = _screenCapturer.GetBitmapScreenshot(processName);
-            retryCounter++;
-        }
-
-        if (screenShoot is null) 
-        {
-            throw new InvalidOperationException("Failed to capture screenshoot");
-        }
-
+        Image screenShoot = _screenCapturer.GetBitmapScreenshot(processName);
 
         string tempScreenshotPath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
         screenShoot.Save(tempScreenshotPath);

@@ -35,9 +35,10 @@
             // 
             // StartStopButton
             // 
+            StartStopButton.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             StartStopButton.Location = new Point(35, 34);
             StartStopButton.Name = "StartStopButton";
-            StartStopButton.Size = new Size(75, 23);
+            StartStopButton.Size = new Size(110, 47);
             StartStopButton.TabIndex = 0;
             StartStopButton.Text = "Start";
             StartStopButton.UseVisualStyleBackColor = true;
@@ -45,20 +46,22 @@
             // 
             // richTextBoxLogControl
             // 
+            richTextBoxLogControl.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             richTextBoxLogControl.ForContext = "";
-            richTextBoxLogControl.Location = new Point(12, 177);
+            richTextBoxLogControl.Location = new Point(12, 202);
             richTextBoxLogControl.Name = "richTextBoxLogControl";
             richTextBoxLogControl.ReadOnly = true;
-            richTextBoxLogControl.Size = new Size(1144, 594);
+            richTextBoxLogControl.Size = new Size(788, 397);
             richTextBoxLogControl.TabIndex = 1;
             richTextBoxLogControl.Text = "";
             // 
             // DuelistsListBox
             // 
+            DuelistsListBox.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             DuelistsListBox.FormattingEnabled = true;
-            DuelistsListBox.Location = new Point(585, 34);
+            DuelistsListBox.Location = new Point(554, 34);
             DuelistsListBox.Name = "DuelistsListBox";
-            DuelistsListBox.Size = new Size(241, 94);
+            DuelistsListBox.Size = new Size(246, 148);
             DuelistsListBox.TabIndex = 2;
             DuelistsListBox.SelectedIndexChanged += DuelistsListBox_SelectedIndexChanged;
             // 
@@ -66,7 +69,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1168, 783);
+            ClientSize = new Size(810, 611);
             Controls.Add(DuelistsListBox);
             Controls.Add(richTextBoxLogControl);
             Controls.Add(StartStopButton);

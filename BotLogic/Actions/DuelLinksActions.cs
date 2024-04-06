@@ -1,10 +1,8 @@
 ﻿using BotLogic.ImageFinder;
 using BotLogic.MouseSimulator;
 using Microsoft.Extensions.Logging;
-using MLDetection;
 using ScreenCapture.Helpers;
 using System.Drawing;
-using System.Windows.Forms;
 
 namespace BotLogic.Actions;
 
@@ -110,7 +108,7 @@ public class DuelLinksActions : IActions
 
             if (loopcount > 3)
             {
-                ClickMiddleOfScreen();
+                ClickScreen();
                 if (lastValidClickLocation.HasValue)
                 {
                     _mouseSimulator.SimulateMouseClick(lastValidClickLocation.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
@@ -159,12 +157,35 @@ public class DuelLinksActions : IActions
         return _imageFinder.DoesImageExistsCV(ImageNames.MATCHOVER_OK, ProcessNames.DUEL_LINKS);
     }
 
-    public void ClickMiddleOfScreen()
+    public void ClickScreen()
     {
-        _logger.LogInformation(nameof(ClickMiddleOfScreen));
+        _logger.LogInformation(nameof(ClickScreen));
 
-        Point point = _imageFinder.GetImageCenter(ProcessNames.DUEL_LINKS);
+        Point point = _imageFinder.GetImagePosition(ProcessNames.DUEL_LINKS, ImageAlignment.Bottom);
 
         _mouseSimulator.SimulateMouseClick(point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+    }
+
+    public async Task StartNetworkInterruptionChecker(CancellationToken cts)
+    {
+        PeriodicTimer timer = new (TimeSpan.FromSeconds(10));
+
+        while (await timer.WaitForNextTickAsync(cts)) 
+        {
+            _logger.LogInformation("Check for network interruption error");
+            try
+            {
+                Point? point = _imageFinder.GetImageLocationCV(ImageNames.RETRY, ProcessNames.DUEL_LINKS);
+
+                if (point.HasValue)
+                {
+                    _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex.Message);
+            }
+        }
     }
 }

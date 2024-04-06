@@ -16,6 +16,7 @@ public static class ImageNames
     public const string SHOP = "Shop.png";
     public const string CLOSE = "Close.png";
     public const string BACK = "Back.png";
+    public const string RETRY = "Retry.png";
 
     public static List<string> MatchOverImages()
     {

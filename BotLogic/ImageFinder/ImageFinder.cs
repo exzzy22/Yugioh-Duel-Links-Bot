@@ -80,7 +80,7 @@ public class ImageFinder : IImageFinder
         }
     }
 
-    public Point GetImageCenter(string processName)
+    public Point GetImagePosition(string processName, ImageAlignment alignment)
     {
         string tempScreenshotPath = CreateScreenshot(processName);
 
@@ -89,8 +89,25 @@ public class ImageFinder : IImageFinder
 
         using (Bitmap bmp = new Bitmap(tempScreenshotPath))
         {
-            centerX = bmp.Width / 2;
-            centerY = bmp.Height / 2;
+            int marginOffset = (int)(0.15 * bmp.Height); // 15% offset from margins
+
+            switch (alignment)
+            {
+                case ImageAlignment.Top:
+                    centerX = bmp.Width / 2;
+                    centerY = marginOffset;
+                    break;
+                case ImageAlignment.Middle:
+                    centerX = bmp.Width / 2;
+                    centerY = bmp.Height / 2;
+                    break;
+                case ImageAlignment.Bottom:
+                    centerX = bmp.Width / 2;
+                    centerY = bmp.Height - marginOffset;
+                    break;
+                default:
+                    throw new ArgumentException("Invalid alignment specified", nameof(alignment));
+            }
         }
 
         File.Delete(tempScreenshotPath);
@@ -126,7 +143,21 @@ public class ImageFinder : IImageFinder
 
     private string CreateScreenshot(string processName)
     {
-        Image screenShoot = _screenCapturer.GetBitmapScreenshot(processName) ?? throw new InvalidOperationException("Failed to capture screenshot.");
+        int retryCounter = 0;
+        Image? screenShoot = _screenCapturer.GetBitmapScreenshot(processName);
+
+        while (screenShoot is null && retryCounter < 5)
+        {
+            _logger.LogWarning("Failed to take screenshot, retrying");
+            screenShoot = _screenCapturer.GetBitmapScreenshot(processName);
+            retryCounter++;
+        }
+
+        if (screenShoot is null) 
+        {
+            throw new InvalidOperationException("Failed to capture screenshoot");
+        }
+
 
         string tempScreenshotPath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
         screenShoot.Save(tempScreenshotPath);

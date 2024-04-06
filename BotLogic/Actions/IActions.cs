@@ -4,7 +4,7 @@ namespace BotLogic.Actions;
 
 public interface IActions
 {
-    public void ClickMiddleOfScreen();
+    public void ClickScreen();
     public void ClickDuelist(Point point);
     public void ClickDuelistDialogUntilDissapers();
     public void StartAutoDuel();
@@ -18,4 +18,5 @@ public interface IActions
     public void ClickAfterDuelDialogs();
     public bool IsOnHomepage();
     public bool IsDuelOver();
+    public Task StartNetworkInterruptionChecker(CancellationToken cts);
 }

@@ -54,6 +54,9 @@
     <None Update="Images\PvPArena.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\Retry.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Images\RightArrow.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

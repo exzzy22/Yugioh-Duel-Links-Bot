@@ -8,5 +8,5 @@ public interface IImageFinder
     List<ObjectPoint> GetImagesLocationsML(string processName);
     Point? GetImageLocationCV(string imageName, string processName);
     bool DoesImageExistsCV(string imageName, string processName);
-    Point GetImageCenter(string processName);
+    Point GetImagePosition(string processName, ImageAlignment alignment);
 }

@@ -27,6 +27,8 @@ public partial class MainForm : Form
 
     private async void StartStopButton_Click(object sender, EventArgs e)
     {
+        StartStopButton.Enabled = false;
+
         if (StartStopButton.Text.Equals(STOP_TEXT))
         {
             await _cts.CancelAsync();
@@ -34,6 +36,7 @@ public partial class MainForm : Form
             _cts = new ();
             StartStopButton.Text = START_TEXT;
             StartStopButton.BackColor = Color.White;
+            StartStopButton.Enabled = true;
 
             return;
         }
@@ -44,6 +47,9 @@ public partial class MainForm : Form
 
         StartStopButton.Text = STOP_TEXT;
         StartStopButton.BackColor = Color.Red;
+        StartStopButton.Enabled = true;
+
+        _ = Task.Run(async () => { await _logic.StartNetworkInterruptionChecker(_cts.Token); });
 
         await _logic.StartDuelWorldLoop(_cts.Token, selected);
     }

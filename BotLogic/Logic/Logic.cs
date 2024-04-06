@@ -58,4 +58,5 @@ public class Logic : ILogic
         }
     }
 
+    public async Task StartNetworkInterruptionChecker(CancellationToken cts) => await _actions.StartNetworkInterruptionChecker(cts);
 }

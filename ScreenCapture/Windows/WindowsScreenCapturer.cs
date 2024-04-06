@@ -26,7 +26,7 @@ public class WindowsScreenCapturer : IScreenCapturer
         //See this article for key list
         //https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.sendkeys?view=windowsdesktop-6.0#remarks
         SendKeys.SendWait("%({PRTSC})");
-        Thread.Sleep(200);
+        Thread.Sleep(600);
 
         //The GetImage function in WPF gets a bitmapsource image
         //This could be replaced with the Winforms getimage since that returns an image

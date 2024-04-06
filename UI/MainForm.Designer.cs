@@ -30,6 +30,7 @@
         {
             StartStopButton = new Button();
             richTextBoxLogControl = new Serilog.Sinks.WinForms.Core.RichTextBoxLogControl();
+            DuelistsListBox = new CheckedListBox();
             SuspendLayout();
             // 
             // StartStopButton
@@ -52,11 +53,21 @@
             richTextBoxLogControl.TabIndex = 1;
             richTextBoxLogControl.Text = "";
             // 
+            // DuelistsListBox
+            // 
+            DuelistsListBox.FormattingEnabled = true;
+            DuelistsListBox.Location = new Point(585, 34);
+            DuelistsListBox.Name = "DuelistsListBox";
+            DuelistsListBox.Size = new Size(241, 94);
+            DuelistsListBox.TabIndex = 2;
+            DuelistsListBox.SelectedIndexChanged += DuelistsListBox_SelectedIndexChanged;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1168, 783);
+            Controls.Add(DuelistsListBox);
             Controls.Add(richTextBoxLogControl);
             Controls.Add(StartStopButton);
             Name = "MainForm";
@@ -68,5 +79,6 @@
 
         private Button StartStopButton;
         private Serilog.Sinks.WinForms.Core.RichTextBoxLogControl richTextBoxLogControl;
+        private CheckedListBox DuelistsListBox;
     }
 }

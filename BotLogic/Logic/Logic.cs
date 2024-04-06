@@ -15,39 +15,46 @@ public class Logic : ILogic
 
     }
 
-    public async Task StartDuelWorldLoop(CancellationToken cancellationToken)
+    public async Task StartDuelWorldLoop(CancellationToken cancellationToken , List<string> duelistTypes)
     {
-        while (!cancellationToken.IsCancellationRequested)
+        try
         {
-            var points = _actions.GetAllWorldDuelistsOnScreen();
-
-            _logger.LogInformation($"Found {points.Count} Duelists");
-
-            if (!points.Any())
+            while (!cancellationToken.IsCancellationRequested)
             {
-                _actions.MoveScreenRight();
-                await Task.Delay(4000, cancellationToken);
-                continue;
-            }
+                var points = _actions.GetAllWorldDuelistsOnScreen(duelistTypes);
 
-            foreach (var point in points)
-            {
-                _logger.LogInformation("Click Duelist");
-                _actions.ClickDuelist(point);
-                await Task.Delay(4000, cancellationToken);
-                _actions.ClickDuelistDialogUntilDissapers();
-                await Task.Delay(3000, cancellationToken);
-                _actions.StartAutoDuel();
+                _logger.LogInformation($"Found {points.Count} Duelists");
 
-                while (!_actions.IsDuelOver())
+                if (!points.Any())
                 {
-                    await Task.Delay(10000, cancellationToken);
+                    _actions.MoveScreenRight();
+                    await Task.Delay(4000, cancellationToken);
+                    continue;
                 }
 
-                _logger.LogInformation("Duel Over");
+                foreach (var point in points)
+                {
+                    _logger.LogInformation("Click Duelist");
+                    _actions.ClickDuelist(point);
+                    await Task.Delay(4000, cancellationToken);
+                    _actions.ClickDuelistDialogUntilDissapers();
+                    await Task.Delay(3000, cancellationToken);
+                    _actions.StartAutoDuel();
 
-                _actions.ClickAfterDuelDialogs();
+                    while (!_actions.IsDuelOver())
+                    {
+                        await Task.Delay(10000, cancellationToken);
+                    }
+
+                    _logger.LogInformation("Duel Over");
+
+                    _actions.ClickAfterDuelDialogs();
+                }
             }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Stopping program");
         }
     }
 

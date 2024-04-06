@@ -84,12 +84,12 @@ public class DuelLinksActions : IActions
         _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 
-    public List<Point> GetAllWorldDuelistsOnScreen()
+    public List<Point> GetAllWorldDuelistsOnScreen(List<string> duelistTypes)
     {
         _logger.LogInformation("Get all world duelists on screen");
 
         List<Point> worldDuelists = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS)
-            .Where(i => i.Tag.Equals(Tags.WORLD_DUELIST))
+            .Where(i => duelistTypes.Contains(i.Tag))
             .Select(i => i.Point)
             .ToList();
 

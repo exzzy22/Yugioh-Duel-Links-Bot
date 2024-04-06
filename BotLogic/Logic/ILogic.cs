@@ -2,5 +2,5 @@
 
 public interface ILogic
 {
-    Task StartDuelWorldLoop(CancellationToken cancellationToken);
+    Task StartDuelWorldLoop(CancellationToken cancellationToken, List<string> duelistTypes);
 }

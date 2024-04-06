@@ -10,7 +10,7 @@ public interface IActions
     public void StartAutoDuel();
     public void MoveScreenRight();
     public void MoveScreenLeft();
-    List<Point> GetAllWorldDuelistsOnScreen();
+    List<Point> GetAllWorldDuelistsOnScreen(List<string> duelistTypes);
     /// <summary>
     /// Click all dialogs that appear after a duel until home screen appears
     /// </summary>

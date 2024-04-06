@@ -44,11 +44,16 @@ public class DuelLinksActions : IActions
     { 
         _logger.LogInformation(nameof(StartAutoDuel));
 
+        int retryCount = 0;
+
         Point? autoDialog = _imageFinder.GetImageLocationCV(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS);
 
         while (!autoDialog.HasValue)
         {
+            if (retryCount > 3) return;
+
             autoDialog = _imageFinder.GetImageLocationCV(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS);
+            retryCount++;
         }
 
         _mouseSimulator.SimulateMouseClick(autoDialog.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
@@ -58,10 +63,14 @@ public class DuelLinksActions : IActions
     {
         _logger.LogInformation(nameof(MoveScreenLeft));
 
+        int retryCount = 0;
+
         Point? point = _imageFinder.GetImageLocationCV(ImageNames.LEFT_ARROW, ProcessNames.DUEL_LINKS);
 
         while(!point.HasValue)
         {
+            if (retryCount > 3) return;
+
             point = _imageFinder.GetImageLocationCV(ImageNames.LEFT_ARROW, ProcessNames.DUEL_LINKS);
         }
 
@@ -72,10 +81,14 @@ public class DuelLinksActions : IActions
     {
         _logger.LogInformation(nameof(MoveScreenRight));
 
+        int retryCount = 0;
+
         Point? point = _imageFinder.GetImageLocationCV(ImageNames.RIGHT_ARROW, ProcessNames.DUEL_LINKS);
 
         while (!point.HasValue)
         {
+            if (retryCount > 3) return;
+
             point = _imageFinder.GetImageLocationCV(ImageNames.RIGHT_ARROW, ProcessNames.DUEL_LINKS);
         }
 

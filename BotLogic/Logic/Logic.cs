@@ -38,8 +38,12 @@ public class Logic : ILogic
                     _actions.ClickDuelist(point);
                     await Task.Delay(4000, cancellationToken);
                     _actions.ClickDuelistDialogUntilDissapers();
-                    await Task.Delay(3000, cancellationToken);
+                    await Task.Delay(4000, cancellationToken);
                     _actions.StartAutoDuel();
+                    await Task.Delay(2000, cancellationToken);
+
+                    if (_actions.IsOnHomepage()) continue;
+
 
                     while (!_actions.IsDuelOver())
                     {

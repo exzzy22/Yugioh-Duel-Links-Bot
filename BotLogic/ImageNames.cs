@@ -14,6 +14,8 @@ public static class ImageNames
     public const string GATE = "Gate.png";
     public const string PVP_ARENA = "PvPArena.png";
     public const string SHOP = "Shop.png";
+    public const string CLOSE = "Close.png";
+    public const string BACK = "Back.png";
 
     public static List<string> MatchOverImages()
     {
@@ -24,6 +26,8 @@ public static class ImageNames
             MATCHOVER_DIALOG_OK,
             MATCHOVER_DIALOG_OK_2,
             DIALOG_NEXT,
+            CLOSE,
+            BACK,
         };
     }
 

@@ -80,6 +80,23 @@ public class ImageFinder : IImageFinder
         }
     }
 
+    public Point GetImageCenter(string processName)
+    {
+        string tempScreenshotPath = CreateScreenshot(processName);
+
+        int centerX = 0;
+        int centerY = 0;
+
+        using (Bitmap bmp = new Bitmap(tempScreenshotPath))
+        {
+            centerX = bmp.Width / 2;
+            centerY = bmp.Height / 2;
+        }
+
+        File.Delete(tempScreenshotPath);
+        return new Point(centerX, centerY);
+    }
+
     private (Rectangle rectangle, double minVal, double maxVal) FindTemplateMatch(string tempScreenshotPath, string imagePath)
     {
         Mat img = CvInvoke.Imread(tempScreenshotPath, ImreadModes.Grayscale);

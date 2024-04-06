@@ -8,7 +8,7 @@ internal class ModelOutput
     public uint[]? Labels { get; set; }
 
     [ColumnName(@"Image")]
-    [Microsoft.ML.Transforms.Image.ImageType(600, 800)]
+    [Microsoft.ML.Transforms.Image.ImageType(1328, 2306)]
     public MLImage? Image { get; set; }
 
     [ColumnName(@"Box")]

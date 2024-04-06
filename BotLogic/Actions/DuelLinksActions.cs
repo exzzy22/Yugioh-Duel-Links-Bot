@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using MLDetection;
 using ScreenCapture.Helpers;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace BotLogic.Actions;
 
@@ -101,23 +102,39 @@ public class DuelLinksActions : IActions
 
         bool homepageexists = false;
 
+        int loopcount = 0;
 
         while (!homepageexists)
         {
+            Point? lastValidClickLocation = null;
+
+            if (loopcount > 3)
+            {
+                ClickMiddleOfScreen();
+                if (lastValidClickLocation.HasValue)
+                {
+                    _mouseSimulator.SimulateMouseClick(lastValidClickLocation.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+                }
+                loopcount = 0;
+            }
+
             foreach (var image in ImageNames.MatchOverImages())
             {
                 Point? point = _imageFinder.GetImageLocationCV(image, ProcessNames.DUEL_LINKS);
 
                 if (point.HasValue)
                 {
+                    lastValidClickLocation = point;
                     _logger.LogInformation($"Clicking {image}");
                     _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
                 }
 
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
             }
 
             homepageexists = IsOnHomepage();
+
+            loopcount++;
         }
     }
 
@@ -140,5 +157,14 @@ public class DuelLinksActions : IActions
         _logger.LogInformation(nameof(IsDuelOver));
 
         return _imageFinder.DoesImageExistsCV(ImageNames.MATCHOVER_OK, ProcessNames.DUEL_LINKS);
+    }
+
+    public void ClickMiddleOfScreen()
+    {
+        _logger.LogInformation(nameof(ClickMiddleOfScreen));
+
+        Point point = _imageFinder.GetImageCenter(ProcessNames.DUEL_LINKS);
+
+        _mouseSimulator.SimulateMouseClick(point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 }

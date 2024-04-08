@@ -193,9 +193,9 @@ public class DuelLinksActions : IActions
     {
         PeriodicTimer timer = new (TimeSpan.FromSeconds(10));
 
-        while (await timer.WaitForNextTickAsync(cts) && !cts.IsCancellationRequested) 
+        try
         {
-            try
+            while (await timer.WaitForNextTickAsync(cts) && !cts.IsCancellationRequested)
             {
                 Point? point = _imageFinder.GetImageLocationCV(ImageNames.RETRY, ProcessNames.DUEL_LINKS);
 
@@ -205,19 +205,19 @@ public class DuelLinksActions : IActions
                     _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
                 }
             }
-            catch (OperationCanceledException)
-            {
-                _logger.LogInformation("Stoping Network Interruption Checker");
-                break;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex.Message);
-            }
-            finally 
-            { 
-                timer.Dispose(); 
-            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Stoping Network Interruption Checker");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex.Message);
+        }
+        finally
+        {
+            _logger.LogInformation("Network Interruption Checker Finally");
+            timer.Dispose();
         }
     }
 }

@@ -34,6 +34,7 @@ internal static class Program
     static IHostBuilder CreateHostBuilder()
     {
         return Host.CreateDefaultBuilder()
+            .ConfigureLogging(loggingBuilder => loggingBuilder.AddSerilog(GetLogger(), true))
             .ConfigureServices((context, services) => {
                 services.AddTransient<ILogic, Logic>();
                 services.AddTransient<IActions, DuelLinksActions>();
@@ -43,7 +44,7 @@ internal static class Program
                 services.AddTransient<IHelpers, Helpers>();
                 services.AddTransient<IConsumeModel, ConsumeModel>();
                 services.AddTransient<MainForm>();
-                services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(GetLogger(), true));
+                //services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(GetLogger(), true));
             });
     }
 
@@ -52,6 +53,7 @@ internal static class Program
         return new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteToSimpleAndRichTextBox(new MessageTemplateTextFormatter("{Timestamp} [{Level}] {Message} {Exception}\n"))
+            .WriteTo.File(Path.Combine("Logs", "log-.log"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 2)
             .CreateLogger();
     }
 }

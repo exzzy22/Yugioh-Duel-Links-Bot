@@ -74,7 +74,7 @@
             Controls.Add(richTextBoxLogControl);
             Controls.Add(StartStopButton);
             Name = "MainForm";
-            Text = "MainForm";
+            Text = "Yu-Gi-Oh! Duel Links Bot";
             ResumeLayout(false);
         }
 

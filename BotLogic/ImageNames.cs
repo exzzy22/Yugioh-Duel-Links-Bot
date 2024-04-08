@@ -5,6 +5,7 @@ public static class ImageNames
     public const string LEFT_ARROW = "LeftArrow.png";
     public const string RIGHT_ARROW = "RightArrow.png";
     public const string DIALOG_NEXT = "Dialog_Next.png";
+    public const string DIALOG_NEXT_2 = "Dialog_Next2.png";
     public const string AUTO_DUEL = "Auto-Duel.png";
     public const string MATCHOVER_OK = "MatchOver_OK.png";
     public const string MATCHOVER_NEXT = "MatchOver_Next.png";
@@ -17,6 +18,7 @@ public static class ImageNames
     public const string CLOSE = "Close.png";
     public const string BACK = "Back.png";
     public const string RETRY = "Retry.png";
+    public const string NO = "No.png";
 
     public static List<string> MatchOverImages()
     {
@@ -29,6 +31,7 @@ public static class ImageNames
             DIALOG_NEXT,
             CLOSE,
             BACK,
+            NO,
         };
     }
 

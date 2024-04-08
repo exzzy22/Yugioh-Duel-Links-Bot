@@ -21,9 +21,19 @@ public class DuelLinksActions : IActions
         _logger = logger;
     }
 
-    public void ClickDuelist(Point point)
+    public bool ClickDuelist(Point point)
     {
         _mouseSimulator.SimulateMouseClick(point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+
+        Thread.Sleep(3000);
+
+        if (_imageFinder.DoesImageExistsCV(ImageNames.DIALOG_NEXT, ProcessNames.DUEL_LINKS)
+            || _imageFinder.DoesImageExistsCV(ImageNames.DIALOG_NEXT_2, ProcessNames.DUEL_LINKS))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public void ClickDuelistDialogUntilDissapers()
@@ -183,7 +193,7 @@ public class DuelLinksActions : IActions
     {
         PeriodicTimer timer = new (TimeSpan.FromSeconds(10));
 
-        while (await timer.WaitForNextTickAsync(cts)) 
+        while (await timer.WaitForNextTickAsync(cts) && !cts.IsCancellationRequested) 
         {
             try
             {
@@ -203,6 +213,10 @@ public class DuelLinksActions : IActions
             catch (Exception ex)
             {
                 _logger.LogWarning(ex.Message);
+            }
+            finally 
+            { 
+                timer.Dispose(); 
             }
         }
     }

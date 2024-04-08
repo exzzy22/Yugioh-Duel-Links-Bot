@@ -30,6 +30,9 @@
     <None Update="Images\Dialog_Next.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\Dialog_Next2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Images\Dialog_OK.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -49,6 +52,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\MatchOver_OK.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\No.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\PvPArena.png">

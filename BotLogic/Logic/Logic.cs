@@ -35,15 +35,17 @@ public class Logic : ILogic
                 foreach (var point in points)
                 {
                     _logger.LogInformation("Click Duelist");
-                    _actions.ClickDuelist(point);
+                    bool duelistExists = _actions.ClickDuelist(point);
+                    if (!duelistExists)
+                    {
+                        _actions.ClickAfterDuelDialogs();
+                        continue;
+                    }
                     await Task.Delay(4000, cancellationToken);
                     _actions.ClickDuelistDialogUntilDissapers();
                     await Task.Delay(4000, cancellationToken);
                     _actions.StartAutoDuel();
                     await Task.Delay(2000, cancellationToken);
-
-                    if (_actions.IsOnHomepage()) continue;
-
 
                     while (!_actions.IsDuelOver())
                     {

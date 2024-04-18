@@ -5,8 +5,8 @@ namespace MLDetection;
 
 internal class MLModelConsumption
 {
-    public const int TrainingImageWidth = 2306;
-    public const int TrainingImageHeight = 1328;
+    public const int TrainingImageWidth = 2560;
+    public const int TrainingImageHeight = 1440;
 
 
     private static string MLNetModelPath = Path.GetFullPath("PredictionModel.mlnet");

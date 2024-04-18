@@ -10,7 +10,7 @@ internal class ModelInput
 
     [LoadColumn(1)]
     [ColumnName(@"Image")]
-    [Microsoft.ML.Transforms.Image.ImageType(1328, 2306)]
+    [Microsoft.ML.Transforms.Image.ImageType(1440, 2560)]
     public MLImage Image { get; set; } = null!;
 
     [LoadColumn(2)]

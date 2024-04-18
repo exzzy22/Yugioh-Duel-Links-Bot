@@ -4,7 +4,7 @@ namespace BotLogic.MouseSimulator;
 
 public interface IMouseSimulator
 {
-    void SimulateMouseClick(Point point, IntPtr? hWnd = null);
+    void SimulateMouseClick(Point point, IntPtr hWnd);
 
     void DoMouseScroll(int delta);
 }

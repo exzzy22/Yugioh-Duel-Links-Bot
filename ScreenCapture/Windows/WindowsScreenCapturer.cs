@@ -10,7 +10,7 @@ public class WindowsScreenCapturer : IScreenCapturer
     {
         _helpers = helpers;
     }
-    public Image GetBitmapScreenshot(string processName)
+    public Image GetScreenScreenshot(string processName, bool isWindow)
     {
         nint handle = _helpers.GetWindowHandle(processName);
 
@@ -24,6 +24,28 @@ public class WindowsScreenCapturer : IScreenCapturer
 
         if (Screen.PrimaryScreen is null) throw new ArgumentException("Primary screen is null");
 
+
+        if (isWindow)
+        {
+            var rect = User32.GetWindowsRectangle(handle);
+
+            // Create a new bitmap object that matches the size of the screen
+            var bmpWindowsScreenshot = new Bitmap(rect.Width, rect.Height);
+
+            // Create a graphics object from the bitmap
+            var gfxWindowScreenshot = Graphics.FromImage(bmpWindowsScreenshot);
+
+            gfxWindowScreenshot.CopyFromScreen(rect.X,
+                             rect.Y,
+                             0,
+                             0,
+                             new Size(rect.Width, rect.Height),
+                             CopyPixelOperation.SourceCopy);
+
+            return bmpWindowsScreenshot;
+
+        }
+
         // Create a new bitmap object that matches the size of the screen
         var bmpScreenshot = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
                                        Screen.PrimaryScreen.Bounds.Height);
@@ -31,14 +53,12 @@ public class WindowsScreenCapturer : IScreenCapturer
         // Create a graphics object from the bitmap
         var gfxScreenshot = Graphics.FromImage(bmpScreenshot);
 
-        // Take a screenshot of the entire screen
         gfxScreenshot.CopyFromScreen(Screen.PrimaryScreen.Bounds.X,
                                      Screen.PrimaryScreen.Bounds.Y,
                                      0,
                                      0,
                                      Screen.PrimaryScreen.Bounds.Size,
                                      CopyPixelOperation.SourceCopy);
-
         return bmpScreenshot;
     }
 }

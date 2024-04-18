@@ -8,9 +8,18 @@ internal class User32
     [DllImport("user32.dll")]
     static extern bool SetCursorPos(int X, int Y);
 
-    public static void MoveCursorToPoint(int x, int y, IntPtr? hWnd = null)
+    public static void MoveCursorToPoint(int x, int y, IntPtr hWnd, bool adjustForWindow = true)
     {
-        SetCursorPos(x, y);
+        if (!adjustForWindow)
+        {
+            SetCursorPos(x, y);
+            return;
+        }
+
+        Point offsetPoint = new(0, 0);
+        ClientToScreen(hWnd, ref offsetPoint);
+        Point adjustedPoint = new Point(offsetPoint.X + x, offsetPoint.Y + y);
+        SetCursorPos(adjustedPoint.X, adjustedPoint.Y);
     }
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
@@ -33,5 +42,5 @@ internal class User32
     }
 
     [DllImport("user32.dll")]
-    static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
+    public static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
 }

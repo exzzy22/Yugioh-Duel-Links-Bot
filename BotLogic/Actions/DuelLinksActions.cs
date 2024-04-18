@@ -46,7 +46,9 @@ public class DuelLinksActions : IActions
             {
                 _mouseSimulator.SimulateMouseClick(point.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
             }
-            Thread.Sleep(6000);
+            Thread.Sleep(3000);
+
+            if(_imageFinder.DoesImageExistsCV(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS)) { break; }
 
             duelistDialogPoints = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
         }
@@ -111,11 +113,12 @@ public class DuelLinksActions : IActions
     {
         _logger.LogInformation("Get all world duelists on screen");
 
-        List<Point> worldDuelists = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, duelistTypes)
+        List<ObjectPoint> worldDuelists = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, duelistTypes);
+
+        return worldDuelists
+            .Where(i => duelistTypes.Contains(i.Tag))
             .Select(i => i.Point)
             .ToList();
-
-        return worldDuelists;
     }
 
     public void ClickAfterDuelDialogs()

@@ -6,6 +6,8 @@ namespace MLDetection;
 
 public class ConsumeModel : IConsumeModel
 {
+    private readonly object _locker = new object();
+
     public List<ObjectPoint> GetObjects(string imagePath, List<Tag>? tags = null)
     {
         var image = MLImage.CreateFromFile(imagePath);
@@ -43,7 +45,12 @@ public class ConsumeModel : IConsumeModel
 
     private List<ObjectPoint> GetObjects(ModelInput input)
     {
-        ModelOutput predictionResult = MLModelConsumption.Predict(input);
+        ModelOutput predictionResult;
+
+        lock (_locker) 
+        {
+            predictionResult = MLModelConsumption.Predict(input);
+        }
 
         if (predictionResult is null
             || predictionResult.PredictedBoundingBoxes is null

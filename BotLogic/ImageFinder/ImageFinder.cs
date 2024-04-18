@@ -154,7 +154,7 @@ public class ImageFinder : IImageFinder
 
     private string CreateScreenshot(string processName)
     {
-        Image screenShoot = _screenCapturer.GetBitmapScreenshot(processName);
+        Image screenShoot = _screenCapturer.GetScreenScreenshot(processName, false);
 
         string tempScreenshotPath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
         screenShoot.Save(tempScreenshotPath);

@@ -1,8 +1,10 @@
 ﻿using BotLogic.ImageFinder;
 using BotLogic.MouseSimulator;
 using Microsoft.Extensions.Logging;
+using MLDetection;
+using MLDetection.Models;
 using ScreenCapture.Helpers;
-using System.Drawing;
+using Point = System.Drawing.Point;
 
 namespace BotLogic.Actions;
 
@@ -27,26 +29,26 @@ public class DuelLinksActions : IActions
 
         Thread.Sleep(3000);
 
-        if (_imageFinder.DoesImageExistsCV(ImageNames.DIALOG_NEXT, ProcessNames.DUEL_LINKS)
-            || _imageFinder.DoesImageExistsCV(ImageNames.DIALOG_NEXT_2, ProcessNames.DUEL_LINKS))
-        {
-            return true;
-        }
+        List<ObjectPoint> duelistDialogPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
 
-        return false;
+        return duelistDialogPoint.Count > 0;
     }
 
     public void ClickDuelistDialogUntilDissapers()
     {
         _logger.LogInformation(nameof(ClickDuelistDialogUntilDissapers));
 
-        Point? dialogLocation = _imageFinder.GetImageLocationCV(ImageNames.DIALOG_NEXT, ProcessNames.DUEL_LINKS);
+        List<ObjectPoint> duelistDialogPoints = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
 
-        while (dialogLocation.HasValue)
+        while (duelistDialogPoints.Count > 0)
         {
-            _mouseSimulator.SimulateMouseClick(dialogLocation.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+            foreach (ObjectPoint point in duelistDialogPoints)
+            {
+                _mouseSimulator.SimulateMouseClick(point.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+            }
             Thread.Sleep(6000);
-            dialogLocation = _imageFinder.GetImageLocationCV(ImageNames.DIALOG_NEXT, ProcessNames.DUEL_LINKS);
+
+            duelistDialogPoints = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
         }
     }
 
@@ -105,12 +107,11 @@ public class DuelLinksActions : IActions
         _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 
-    public List<Point> GetAllWorldDuelistsOnScreen(List<string> duelistTypes)
+    public List<Point> GetAllWorldDuelistsOnScreen(List<Tag> duelistTypes)
     {
         _logger.LogInformation("Get all world duelists on screen");
 
-        List<Point> worldDuelists = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS)
-            .Where(i => duelistTypes.Contains(i.Tag))
+        List<Point> worldDuelists = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, duelistTypes)
             .Select(i => i.Point)
             .ToList();
 
@@ -139,16 +140,11 @@ public class DuelLinksActions : IActions
                 loopcount = 0;
             }
 
-            foreach (var image in ImageNames.MatchOverImages())
-            {
-                Point? point = _imageFinder.GetImageLocationCV(image, ProcessNames.DUEL_LINKS);
+            List<ObjectPoint> clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
 
-                if (point.HasValue)
-                {
-                    lastValidClickLocation = point;
-                    _logger.LogInformation($"Clicking {image}");
-                    _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
-                }
+            foreach (var buttonPoint in clickableButtons)
+            {
+                _mouseSimulator.SimulateMouseClick(buttonPoint.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
 
                 Thread.Sleep(500);
             }
@@ -177,7 +173,9 @@ public class DuelLinksActions : IActions
     {
         _logger.LogInformation(nameof(IsDuelOver));
 
-        return _imageFinder.DoesImageExistsCV(ImageNames.MATCHOVER_OK, ProcessNames.DUEL_LINKS);
+        List<ObjectPoint> okButtonPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS);
+
+        return okButtonPoint.Count > 0;
     }
 
     public void ClickScreen()
@@ -197,12 +195,12 @@ public class DuelLinksActions : IActions
         {
             while (await timer.WaitForNextTickAsync(cts) && !cts.IsCancellationRequested)
             {
-                Point? point = _imageFinder.GetImageLocationCV(ImageNames.RETRY, ProcessNames.DUEL_LINKS);
+                List<ObjectPoint> retryPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.RetryButton);
 
-                if (point.HasValue)
+                if (retryPoint.Count > 0)
                 {
                     _logger.LogInformation("Click network interruption error popup");
-                    _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+                    _mouseSimulator.SimulateMouseClick(retryPoint.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
                 }
             }
         }

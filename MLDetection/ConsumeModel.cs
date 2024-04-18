@@ -6,15 +6,44 @@ namespace MLDetection;
 
 public class ConsumeModel : IConsumeModel
 {
-    public List<ObjectPoint> GetObjects(string imagePath)
+    public List<ObjectPoint> GetObjects(string imagePath, List<Tag>? tags = null)
     {
         var image = MLImage.CreateFromFile(imagePath);
-        ModelInput sampleData = new ModelInput()
+
+        string[]? tagsForSearch = null;
+
+        if (tags is not null)
+        {
+            tagsForSearch = Tags.GetTagNames(tags).ToArray();
+        }
+
+
+        ModelInput input = new ModelInput()
         {
             Image = image,
+            Labels = tagsForSearch,
         };
 
-        ModelOutput predictionResult = MLModelConsumption.Predict(sampleData);
+        return GetObjects(input);
+    }
+
+    public List<ObjectPoint> GetObjects(string imagePath, Tag tag)
+    {
+        var image = MLImage.CreateFromFile(imagePath);
+
+
+        ModelInput input = new ModelInput()
+        {
+            Image = image,
+            Labels = [tag.ToString()],
+        };
+
+        return GetObjects(input);
+    }
+
+    private List<ObjectPoint> GetObjects(ModelInput input)
+    {
+        ModelOutput predictionResult = MLModelConsumption.Predict(input);
 
         if (predictionResult is null
             || predictionResult.PredictedBoundingBoxes is null
@@ -24,7 +53,7 @@ public class ConsumeModel : IConsumeModel
             return new List<ObjectPoint>();
         }
 
-        List<ObjectPoint> middlePoints = new ();
+        List<ObjectPoint> middlePoints = new();
 
         // Iterate through predicted labels and bounding boxes simultaneously
         for (int i = 0; i < predictionResult.PredictedBoundingBoxes.Length; i += 4)
@@ -37,13 +66,16 @@ public class ConsumeModel : IConsumeModel
             // Get the corresponding label
             var label = predictionResult.PredictedLabel[i / 4];
 
+            var score = predictionResult.Score[i / 4];
+
             int middleX = (int)((xTop + xBottom) / 2);
             int middleY = (int)((yTop + yBottom) / 2);
 
-            middlePoints.Add(new ObjectPoint 
-            { 
+            middlePoints.Add(new ObjectPoint
+            {
                 Point = new Point(middleX, middleY),
-                Tag = label 
+                Tag = Tags.GetTag(label),
+                Score = score
             });
         }
 

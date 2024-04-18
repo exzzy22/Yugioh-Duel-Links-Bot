@@ -1,7 +1,10 @@
-﻿namespace BotLogic.Logic;
+﻿using MLDetection;
+
+namespace BotLogic.Logic;
 
 public interface ILogic
 {
-    Task StartDuelWorldLoop(CancellationToken cancellationToken, List<string> duelistTypes);
+    Task StartDuelWorldLoop(CancellationToken cancellationToken, List<Tag> duelistTypes);
+    Task StartEventDueldLoop(CancellationToken cancellationToken);
     Task StartNetworkInterruptionChecker(CancellationToken cts);
 }

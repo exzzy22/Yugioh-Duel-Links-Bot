@@ -31,6 +31,7 @@
             StartStopButton = new Button();
             richTextBoxLogControl = new Serilog.Sinks.WinForms.Core.RichTextBoxLogControl();
             DuelistsListBox = new CheckedListBox();
+            EventCheckBox = new CheckBox();
             SuspendLayout();
             // 
             // StartStopButton
@@ -65,17 +66,29 @@
             DuelistsListBox.TabIndex = 2;
             DuelistsListBox.SelectedIndexChanged += DuelistsListBox_SelectedIndexChanged;
             // 
+            // EventCheckBox
+            // 
+            EventCheckBox.AutoSize = true;
+            EventCheckBox.Location = new Point(323, 46);
+            EventCheckBox.Name = "EventCheckBox";
+            EventCheckBox.Size = new Size(108, 19);
+            EventCheckBox.TabIndex = 3;
+            EventCheckBox.Text = "EventCheckBox";
+            EventCheckBox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(810, 611);
+            Controls.Add(EventCheckBox);
             Controls.Add(DuelistsListBox);
             Controls.Add(richTextBoxLogControl);
             Controls.Add(StartStopButton);
             Name = "MainForm";
             Text = "Yu-Gi-Oh! Duel Links Bot";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -83,5 +96,6 @@
         private Button StartStopButton;
         private Serilog.Sinks.WinForms.Core.RichTextBoxLogControl richTextBoxLogControl;
         private CheckedListBox DuelistsListBox;
+        private CheckBox EventCheckBox;
     }
 }

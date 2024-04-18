@@ -13,7 +13,7 @@ public class ImageFinder : IImageFinder
 {
     private const string IMAGES_FOLDER_NAME = "Images";
     private const double MAX_TRESHOLD = 0.9;
-    private const double MIN_TRESHOLD = 0.005;
+    private const double MIN_TRESHOLD = 0.01;
 
     private readonly IScreenCapturer _screenCapturer;
     private readonly IConsumeModel _consumeModel;
@@ -26,11 +26,22 @@ public class ImageFinder : IImageFinder
         _logger = logger;
     }
 
-    public List<ObjectPoint> GetImagesLocationsML(string processName)
+    public List<ObjectPoint> GetImagesLocationsML(string processName, List<Tag>? tags = null)
     {
         string tempScreenshotPath = CreateScreenshot(processName);
 
-        List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath);
+        List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tags);
+
+        File.Delete(tempScreenshotPath);
+
+        return ocbjectPoints;
+    }
+
+    public List<ObjectPoint> GetImagesLocationsML(string processName, Tag tag)
+    {
+        string tempScreenshotPath = CreateScreenshot(processName);
+
+        List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tag);
 
         File.Delete(tempScreenshotPath);
 

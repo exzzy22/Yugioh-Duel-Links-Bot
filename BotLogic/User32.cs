@@ -20,10 +20,16 @@ internal class User32
     private const int MOUSEEVENTF_LEFTUP = 0x04;
     private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
     private const int MOUSEEVENTF_RIGHTUP = 0x10;
+    private const uint MOUSEEVENTF_WHEEL = 0x0800;
 
     public static void DoMouseClick()
     {
         mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+    }
+
+    public static void DoMouseScroll(int delta)
+    {
+        mouse_event(MOUSEEVENTF_WHEEL, 0, 0, (uint)delta, (long)UIntPtr.Zero);
     }
 
     [DllImport("user32.dll")]

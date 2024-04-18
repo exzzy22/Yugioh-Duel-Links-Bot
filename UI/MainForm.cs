@@ -13,11 +13,11 @@ public partial class MainForm : Form
     private CancellationTokenSource _cts = new ();
     private Task? _task;
 
-    private readonly Dictionary<string, string> _duelists = new Dictionary<string, string> 
+    private readonly Dictionary<string, Tag> _duelists = new Dictionary<string, Tag> 
     {
-            { "World Duelist", Tags.WORLD_DUELIST },
-            { "Legendary Duelist", Tags.LEGENDARY_DUELIST },
-            { "Vagabond Duelist", Tags.VAGABOND_DUELIST }
+            { "World Duelist", MLDetection.Tag.WorldDuelist },
+            { "Legendary Duelist", MLDetection.Tag.LegendaryDuelist },
+            { "Vagabond Duelist", MLDetection.Tag.VagabondDuelist }
     }; 
     private readonly ILogic _logic;
     private readonly ILogger<MainForm> _logger;
@@ -32,6 +32,18 @@ public partial class MainForm : Form
     }
 
     private async void StartStopButton_Click(object sender, EventArgs e)
+    {
+        if (EventCheckBox.Checked)
+        {
+            await StartEventDuels();
+        }
+        else
+        {
+            await StartWorldDuels();
+        }
+    }
+
+    private async Task StartWorldDuels()
     {
         StartStopButton.Enabled = false;
 
@@ -50,9 +62,37 @@ public partial class MainForm : Form
             return;
         }
 
-        List<string> selected = DuelistsListBox.CheckedItems
-            .GetValues<string,string>()
+        List<Tag> selected = DuelistsListBox.CheckedItems
+            .GetValues<string, Tag>()
             .ToList();
+
+        StartStopButton.Text = STOP_TEXT;
+        StartStopButton.BackColor = Color.Red;
+        StartStopButton.Enabled = true;
+
+        //_task = Task.Run(async () => { await _logic.StartNetworkInterruptionChecker(_cts.Token); });
+
+        await _logic.StartDuelWorldLoop(_cts.Token, selected);
+    }
+
+    private async Task StartEventDuels()
+    {
+        StartStopButton.Enabled = false;
+
+        if (StartStopButton.Text.Equals(STOP_TEXT))
+        {
+            StartStopButton.Text = STOPPING_TEXT;
+            await _cts.CancelAsync();
+            _cts.Dispose();
+            StartStopButton.BackColor = Color.White;
+            StartStopButton.Text = START_TEXT;
+            _cts = new();
+            StartStopButton.Enabled = true;
+            _task?.Dispose();
+            _logger.LogInformation("Program stopped");
+
+            return;
+        }
 
         StartStopButton.Text = STOP_TEXT;
         StartStopButton.BackColor = Color.Red;
@@ -60,8 +100,9 @@ public partial class MainForm : Form
 
         _task = Task.Run(async () => { await _logic.StartNetworkInterruptionChecker(_cts.Token); });
 
-        await _logic.StartDuelWorldLoop(_cts.Token, selected);
+        await _logic.StartEventDueldLoop(_cts.Token);
     }
+
 
     private void DuelistsListBox_SelectedIndexChanged(object sender, EventArgs e)
     {

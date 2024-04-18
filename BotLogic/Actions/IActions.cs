@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using MLDetection;
+using System.Drawing;
 
 namespace BotLogic.Actions;
 
@@ -10,7 +11,7 @@ public interface IActions
     public void StartAutoDuel();
     public void MoveScreenRight();
     public void MoveScreenLeft();
-    List<Point> GetAllWorldDuelistsOnScreen(List<string> duelistTypes);
+    List<Point> GetAllWorldDuelistsOnScreen(List<Tag> duelistTypes);
     /// <summary>
     /// Click all dialogs that appear after a duel until home screen appears
     /// </summary>

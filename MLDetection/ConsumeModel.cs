@@ -6,9 +6,7 @@ namespace MLDetection;
 
 public class ConsumeModel : IConsumeModel
 {
-    private readonly object _locker = new object();
-
-    public List<ObjectPoint> GetObjects(string imagePath, List<Tag>? tags = null)
+    public List<ObjectPoint> GetObjects(string imagePath, List<Tag>? tags = null, float threshold = 0f)
     {
         var image = MLImage.CreateFromFile(imagePath);
 
@@ -26,10 +24,10 @@ public class ConsumeModel : IConsumeModel
             Labels = tagsForSearch,
         };
 
-        return GetObjects(input);
+        return GetObjects(input, threshold, tags ?? []);
     }
 
-    public List<ObjectPoint> GetObjects(string imagePath, Tag tag)
+    public List<ObjectPoint> GetObjects(string imagePath, Tag tag, float threshold = 0f)
     {
         var image = MLImage.CreateFromFile(imagePath);
 
@@ -40,17 +38,14 @@ public class ConsumeModel : IConsumeModel
             Labels = [tag.ToString()],
         };
 
-        return GetObjects(input);
+        return GetObjects(input, threshold, [tag]);
     }
 
-    private List<ObjectPoint> GetObjects(ModelInput input)
+    private List<ObjectPoint> GetObjects(ModelInput input, float threshold, List<Tag> tags)
     {
         ModelOutput predictionResult;
 
-        lock (_locker) 
-        {
-            predictionResult = MLModelConsumption.Predict(input);
-        }
+        predictionResult = MLModelConsumption.Predict(input);
 
         if (predictionResult is null
             || predictionResult.PredictedBoundingBoxes is null
@@ -86,6 +81,9 @@ public class ConsumeModel : IConsumeModel
             });
         }
 
-        return middlePoints;
+        return middlePoints
+            .Where(i => tags.Contains(i.Tag))
+            .Where(x => x.Score > threshold)
+            .ToList();
     }
 }

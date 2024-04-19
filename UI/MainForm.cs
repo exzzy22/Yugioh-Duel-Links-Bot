@@ -31,26 +31,26 @@ public partial class MainForm : Form
         _logger = logger;
     }
 
-    private async void StartStopButton_Click(object sender, EventArgs e)
+    private void StartStopButton_Click(object sender, EventArgs e)
     {
         if (EventCheckBox.Checked)
         {
-            await StartEventDuels();
+            //StartEventDuels();
         }
         else
         {
-            await StartWorldDuels();
+            StartWorldDuels();
         }
     }
 
-    private async Task StartWorldDuels()
+    private void StartWorldDuels()
     {
         StartStopButton.Enabled = false;
 
         if (StartStopButton.Text.Equals(STOP_TEXT))
         {
             StartStopButton.Text = STOPPING_TEXT;
-            await _cts.CancelAsync();
+            _cts.Cancel();
             _cts.Dispose();
             StartStopButton.BackColor = Color.White;
             StartStopButton.Text = START_TEXT;
@@ -72,7 +72,7 @@ public partial class MainForm : Form
 
         //_task = Task.Run(async () => { await _logic.StartNetworkInterruptionChecker(_cts.Token); });
 
-        await _logic.StartDuelWorldLoop(_cts.Token, selected);
+        _logic.StartDuelWorldLoop(_cts.Token, selected);
     }
 
     private async Task StartEventDuels()

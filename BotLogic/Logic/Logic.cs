@@ -23,7 +23,7 @@ public class Logic : ILogic
 
     }
 
-    public async Task StartDuelWorldLoop(CancellationToken cancellationToken, List<Tag> duelistTypes)
+    public void StartDuelWorldLoop(CancellationToken cancellationToken, List<Tag> duelistTypes)
     {
         try
         {
@@ -48,7 +48,7 @@ public class Logic : ILogic
                     int duelCheckCounter = 0;
                     while (!_actions.IsDuelOver())
                     {
-                        await Task.Delay(10000, cancellationToken);
+                        Thread.Sleep(10000);
                         if (duelCheckCounter > 4)
                         {
                             bool result = _actions.CheckForNetworkInterruption();
@@ -64,7 +64,7 @@ public class Logic : ILogic
                 }
 
                 _actions.MoveScreenRight();
-                await Task.Delay(2000, cancellationToken);
+                Thread.Sleep(2000);
             }
         }
         catch (OperationCanceledException)

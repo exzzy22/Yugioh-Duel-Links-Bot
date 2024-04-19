@@ -26,7 +26,7 @@ public class ImageFinder : IImageFinder
         _logger = logger;
     }
 
-    public List<ObjectPoint> GetImagesLocationsML(string processName, List<Tag>? tags = null)
+    public List<ObjectPoint> GetImagesLocationsML(string processName, List<Tag>? tags = null, float threshold = 0f)
     {
         string tempScreenshotPath = CreateScreenshot(processName);
 
@@ -37,7 +37,7 @@ public class ImageFinder : IImageFinder
         return ocbjectPoints;
     }
 
-    public List<ObjectPoint> GetImagesLocationsML(string processName, Tag tag)
+    public List<ObjectPoint> GetImagesLocationsML(string processName, Tag tag, float threshold = 0f)
     {
         string tempScreenshotPath = CreateScreenshot(processName);
 

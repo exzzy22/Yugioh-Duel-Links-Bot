@@ -158,11 +158,7 @@ public class DuelLinksActions : IActions
     {
         _logger.LogInformation("Get all world duelists on screen");
 
-        List<ObjectPoint> worldDuelists = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, duelistTypes);
-
-        return worldDuelists
-            .Where(i => duelistTypes.Contains(i.Tag))
-            .ToList();
+        return _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, duelistTypes, 0.7f);
     }
 
     public void ClickPopUpDialogs()
@@ -176,10 +172,12 @@ public class DuelLinksActions : IActions
         {
             clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
 
-            _mouseSimulator.SimulateMouseClick(clickableButtons.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
-            Thread.Sleep(2000);
-
-            if (clickableButtons.Count < 1)
+            if (clickableButtons.Count > 0)
+            {
+                _mouseSimulator.SimulateMouseClick(clickableButtons.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+                Thread.Sleep(2000);
+            }
+            else
             {
                 ClickScreen();
             }
@@ -217,7 +215,7 @@ public class DuelLinksActions : IActions
     {
         _logger.LogInformation(nameof(IsDuelOver));
 
-        List<ObjectPoint> okButtonPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.OkButton);
+        List<ObjectPoint> okButtonPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.OkButton, 0.7f);
 
         return okButtonPoint.Count > 0;
     }
@@ -233,11 +231,11 @@ public class DuelLinksActions : IActions
 
     public bool CheckForNetworkInterruption()
     {
-        List<ObjectPoint> retryPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.RetryButton);
+        List<ObjectPoint> retryPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.RetryButton, 0.7f);
 
         if (retryPoint.Count > 0)
         {
-            _logger.LogInformation("Click network interruption error popup");
+            _logger.LogInformation("Click network interruption error popup, score: {Score} and Tag {Tag}", retryPoint.First().Score, retryPoint.First().Tag);
             _mouseSimulator.SimulateMouseClick(retryPoint.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
 
             Thread.Sleep(5000);

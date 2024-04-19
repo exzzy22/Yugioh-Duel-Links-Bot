@@ -4,6 +4,6 @@ namespace BotLogic.Logic;
 
 public interface ILogic
 {
-    Task StartDuelWorldLoop(CancellationToken cancellationToken, List<Tag> duelistTypes);
+    void StartDuelWorldLoop(CancellationToken cancellationToken, List<Tag> duelistTypes);
     Task StartEventDueldLoop(CancellationToken cancellationToken);
 }

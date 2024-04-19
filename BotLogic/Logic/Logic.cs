@@ -4,7 +4,6 @@ using BotLogic.MouseSimulator;
 using Microsoft.Extensions.Logging;
 using MLDetection;
 using MLDetection.Models;
-using System.Drawing;
 
 namespace BotLogic.Logic;
 
@@ -18,7 +17,7 @@ public class Logic : ILogic
     public Logic(IActions actions, IImageFinder imageFinder, IMouseSimulator mouseSimulatorq, ILogger<Logic> logger)
     {
         _actions = actions;
-        _imageFinder = imageFinder; 
+        _imageFinder = imageFinder;
         _mouseSimulator = mouseSimulatorq;
         _logger = logger;
 
@@ -30,27 +29,38 @@ public class Logic : ILogic
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                List<ObjectPoint>? points = _actions.GetAllWorldDuelistsOnScreen(duelistTypes);
+                List<ObjectPoint> duelistsOnHomepage = _actions.GetAllWorldDuelistsOnScreen(duelistTypes);
 
-                _logger.LogInformation($"Found {points.Count} Duelists");
+                _logger.LogInformation("Found {Count} Duelists", duelistsOnHomepage.Count);
 
-                foreach (var point in points)
+                if (duelistsOnHomepage.Count < 1)
                 {
-                    _logger.LogInformation("Click Duelist");
-                    bool duelistExists = _actions.StartDuel(point);
-                    if (!duelistExists)
-                    {
-                        continue;
-                    }
+                    _actions.CheckForNetworkInterruption();
+                }
 
+                foreach (var point in duelistsOnHomepage)
+                {
+                    bool duelistExists = _actions.StartDuel(point);
+                    _logger.LogInformation("Click {Tag}", point.Tag);
+
+                    if (!duelistExists) continue;
+
+                    int duelCheckCounter = 0;
                     while (!_actions.IsDuelOver())
                     {
                         await Task.Delay(10000, cancellationToken);
+                        if (duelCheckCounter > 4)
+                        {
+                            bool result = _actions.CheckForNetworkInterruption();
+
+                            if(!result) _actions.ClickScreen();
+                        }
+                        duelCheckCounter++;
                     }
 
                     _logger.LogInformation("Duel Over");
 
-                    _actions.ClickAfterDuelDialogs();
+                    _actions.ClickPopUpDialogs();
                 }
 
                 _actions.MoveScreenRight();
@@ -75,7 +85,7 @@ public class Logic : ILogic
                 {
                     _actions.StartDuel(assistDuelPoint.First());
                 }
-                else 
+                else
                 {
                     _mouseSimulator.DoMouseScroll(-500);
                     continue;
@@ -94,7 +104,7 @@ public class Logic : ILogic
 
                 _logger.LogInformation("Duel Over");
 
-                _actions.ClickAfterDuelDialogs();
+                _actions.ClickPopUpDialogs();
 
             }
         }
@@ -102,7 +112,6 @@ public class Logic : ILogic
         {
             _logger.LogInformation("Stopping program");
         }
-    }
 
-    public async Task StartNetworkInterruptionChecker(CancellationToken cts) => await _actions.StartNetworkInterruptionChecker(cts);
+    }
 }

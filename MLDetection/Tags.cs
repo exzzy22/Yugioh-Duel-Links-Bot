@@ -46,6 +46,7 @@ public static class Tags
             Tag.NextButton,
             Tag.NoButton,
             Tag.DuelistDialog,
+            Tag.RetryButton,
         ];
     }
 

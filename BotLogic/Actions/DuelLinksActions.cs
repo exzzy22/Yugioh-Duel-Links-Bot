@@ -165,40 +165,37 @@ public class DuelLinksActions : IActions
             .ToList();
     }
 
-    public void ClickAfterDuelDialogs()
+    public void ClickPopUpDialogs()
     {
-        _logger.LogInformation(nameof(ClickAfterDuelDialogs));
+        _logger.LogInformation(nameof(ClickPopUpDialogs));
 
         bool homepageexists = false;
-
-        int loopcount = 0;
+        List<ObjectPoint> clickableButtons;
 
         while (!homepageexists)
         {
-            Point? lastValidClickLocation = null;
+            clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
 
-            if (loopcount > 3)
+            _mouseSimulator.SimulateMouseClick(clickableButtons.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+            Thread.Sleep(2000);
+
+            if (clickableButtons.Count < 1)
             {
                 ClickScreen();
-                if (lastValidClickLocation.HasValue)
-                {
-                    _mouseSimulator.SimulateMouseClick(lastValidClickLocation.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
-                }
-                loopcount = 0;
-            }
-
-            List<ObjectPoint> clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
-
-            foreach (var buttonPoint in clickableButtons)
-            {
-                _mouseSimulator.SimulateMouseClick(buttonPoint.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
-
-                Thread.Sleep(500);
             }
 
             homepageexists = IsOnHomepage();
+        }
 
-            loopcount++;
+        clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
+
+        while (clickableButtons.Count > 0)
+        {
+            _mouseSimulator.SimulateMouseClick(clickableButtons.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+            Thread.Sleep(3000);
+
+            clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
+            Thread.Sleep(3000);
         }
     }
 
@@ -220,7 +217,7 @@ public class DuelLinksActions : IActions
     {
         _logger.LogInformation(nameof(IsDuelOver));
 
-        List<ObjectPoint> okButtonPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS);
+        List<ObjectPoint> okButtonPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.OkButton);
 
         return okButtonPoint.Count > 0;
     }
@@ -234,35 +231,20 @@ public class DuelLinksActions : IActions
         _mouseSimulator.SimulateMouseClick(point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 
-    public async Task StartNetworkInterruptionChecker(CancellationToken cts)
+    public bool CheckForNetworkInterruption()
     {
-        PeriodicTimer timer = new (TimeSpan.FromSeconds(10));
+        List<ObjectPoint> retryPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.RetryButton);
 
-        try
+        if (retryPoint.Count > 0)
         {
-            while (await timer.WaitForNextTickAsync(cts) && !cts.IsCancellationRequested)
-            {
-                List<ObjectPoint> retryPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.RetryButton);
+            _logger.LogInformation("Click network interruption error popup");
+            _mouseSimulator.SimulateMouseClick(retryPoint.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
 
-                if (retryPoint.Count > 0)
-                {
-                    _logger.LogInformation("Click network interruption error popup");
-                    _mouseSimulator.SimulateMouseClick(retryPoint.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
-                }
-            }
+            Thread.Sleep(5000);
+
+            return true;
         }
-        catch (OperationCanceledException)
-        {
-            _logger.LogInformation("Stoping Network Interruption Checker");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex.Message);
-        }
-        finally
-        {
-            _logger.LogInformation("Network Interruption Checker Finally");
-            timer.Dispose();
-        }
+
+        return false;
     }
 }

@@ -98,8 +98,6 @@ public partial class MainForm : Form
         StartStopButton.BackColor = Color.Red;
         StartStopButton.Enabled = true;
 
-        _task = Task.Run(async () => { await _logic.StartNetworkInterruptionChecker(_cts.Token); });
-
         await _logic.StartEventDueldLoop(_cts.Token);
     }
 

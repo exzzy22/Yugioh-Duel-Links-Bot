@@ -6,5 +6,4 @@ public interface ILogic
 {
     Task StartDuelWorldLoop(CancellationToken cancellationToken, List<Tag> duelistTypes);
     Task StartEventDueldLoop(CancellationToken cancellationToken);
-    Task StartNetworkInterruptionChecker(CancellationToken cts);
 }

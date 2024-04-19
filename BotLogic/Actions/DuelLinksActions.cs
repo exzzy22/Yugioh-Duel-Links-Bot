@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using MLDetection;
 using MLDetection.Models;
 using ScreenCapture.Helpers;
-using Point = System.Drawing.Point;
+using System.Drawing;
 
 namespace BotLogic.Actions;
 
@@ -23,15 +23,60 @@ public class DuelLinksActions : IActions
         _logger = logger;
     }
 
-    public bool ClickDuelist(Point point)
+    public bool StartDuel(ObjectPoint objectPoint)
     {
-        _mouseSimulator.SimulateMouseClick(point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
-
+        // Click on duelist
+        _mouseSimulator.SimulateMouseClick(objectPoint.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
         Thread.Sleep(3000);
 
+        // Check if auto duel button exists
+        Point? autoDuelPoint = _imageFinder.GetImageLocationCV(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS);
+
+        if (autoDuelPoint.HasValue)
+        {
+            _mouseSimulator.SimulateMouseClick(autoDuelPoint.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+
+            return true;
+        }
+
+        // Check if duelist dialogs exists
         List<ObjectPoint> duelistDialogPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
 
-        return duelistDialogPoint.Count > 0;
+        while (duelistDialogPoint.Count > 0)
+        {
+            ObjectPoint? dialog = duelistDialogPoint.FirstOrDefault();
+
+            if (dialog is not null)
+            {
+                _mouseSimulator.SimulateMouseClick(dialog.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+
+                Thread.Sleep(2000);
+            }
+
+            autoDuelPoint = _imageFinder.GetImageLocationCV(ImageNames.AUTO_DUEL, ProcessNames.DUEL_LINKS);
+
+            if (autoDuelPoint.HasValue)
+            {
+                _mouseSimulator.SimulateMouseClick(autoDuelPoint.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+
+                return true;
+            }
+
+            duelistDialogPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
+        }
+
+        // Check for missclicks and get back if it was missclick
+        List<ObjectPoint> missclickButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.MissClickButtons());
+
+        ObjectPoint? backButton = missclickButtons.FirstOrDefault();
+
+        if (backButton is not null)
+        {
+            _mouseSimulator.SimulateMouseClick(backButton.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+            Thread.Sleep(2000);
+        }
+
+        return false;
     }
 
     public void ClickDuelistDialogUntilDissapers()
@@ -109,7 +154,7 @@ public class DuelLinksActions : IActions
         _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 
-    public List<Point> GetAllWorldDuelistsOnScreen(List<Tag> duelistTypes)
+    public List<ObjectPoint> GetAllWorldDuelistsOnScreen(List<Tag> duelistTypes)
     {
         _logger.LogInformation("Get all world duelists on screen");
 
@@ -117,7 +162,6 @@ public class DuelLinksActions : IActions
 
         return worldDuelists
             .Where(i => duelistTypes.Contains(i.Tag))
-            .Select(i => i.Point)
             .ToList();
     }
 

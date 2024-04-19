@@ -30,31 +30,18 @@ public class Logic : ILogic
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                List<Point>? points = _actions.GetAllWorldDuelistsOnScreen(duelistTypes);
+                List<ObjectPoint>? points = _actions.GetAllWorldDuelistsOnScreen(duelistTypes);
 
                 _logger.LogInformation($"Found {points.Count} Duelists");
-
-                if (!points.Any())
-                {
-                    _actions.MoveScreenRight();
-                    await Task.Delay(4000, cancellationToken);
-                    continue;
-                }
 
                 foreach (var point in points)
                 {
                     _logger.LogInformation("Click Duelist");
-                    bool duelistExists = _actions.ClickDuelist(point);
+                    bool duelistExists = _actions.StartDuel(point);
                     if (!duelistExists)
                     {
-                        _actions.ClickAfterDuelDialogs();
                         continue;
                     }
-                    await Task.Delay(4000, cancellationToken);
-                    _actions.ClickDuelistDialogUntilDissapers();
-                    await Task.Delay(4000, cancellationToken);
-                    _actions.StartAutoDuel();
-                    await Task.Delay(2000, cancellationToken);
 
                     while (!_actions.IsDuelOver())
                     {
@@ -65,6 +52,9 @@ public class Logic : ILogic
 
                     _actions.ClickAfterDuelDialogs();
                 }
+
+                _actions.MoveScreenRight();
+                await Task.Delay(2000, cancellationToken);
             }
         }
         catch (OperationCanceledException)
@@ -83,7 +73,7 @@ public class Logic : ILogic
 
                 if (assistDuelPoint.Count > 0)
                 {
-                    _actions.ClickDuelist(assistDuelPoint.First().Point);
+                    _actions.StartDuel(assistDuelPoint.First());
                 }
                 else 
                 {

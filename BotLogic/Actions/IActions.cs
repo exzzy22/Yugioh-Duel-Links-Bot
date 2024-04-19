@@ -1,4 +1,5 @@
 ﻿using MLDetection;
+using MLDetection.Models;
 using System.Drawing;
 
 namespace BotLogic.Actions;
@@ -6,12 +7,12 @@ namespace BotLogic.Actions;
 public interface IActions
 {
     public void ClickScreen();
-    public bool ClickDuelist(Point point);
+    public bool StartDuel(ObjectPoint objectPoint);
     public void ClickDuelistDialogUntilDissapers();
     public void StartAutoDuel();
     public void MoveScreenRight();
     public void MoveScreenLeft();
-    List<Point> GetAllWorldDuelistsOnScreen(List<Tag> duelistTypes);
+    List<ObjectPoint> GetAllWorldDuelistsOnScreen(List<Tag> duelistTypes);
     /// <summary>
     /// Click all dialogs that appear after a duel until home screen appears
     /// </summary>

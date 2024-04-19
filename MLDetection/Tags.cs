@@ -27,6 +27,15 @@ public static class Tags
         }
     }
 
+    public static List<Tag> MissClickButtons()
+    {
+        return
+        [
+            Tag.BackButton,
+            Tag.CloseButton,
+        ];
+    }
+
     public static List<Tag> ClickableButtons()
     {
         return

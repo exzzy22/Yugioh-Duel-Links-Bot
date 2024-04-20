@@ -161,7 +161,7 @@ public class DuelLinksActions : IActions
         return _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, duelistTypes, 0.7f);
     }
 
-    public void ClickPopUpDialogs()
+    public void ClickPopUpDialogs(Func<bool> checkHomepage)
     {
         _logger.LogInformation(nameof(ClickPopUpDialogs));
 
@@ -182,7 +182,7 @@ public class DuelLinksActions : IActions
                 ClickScreen();
             }
 
-            homepageexists = IsOnHomepage();
+            homepageexists = checkHomepage();
         }
 
         clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
@@ -218,6 +218,15 @@ public class DuelLinksActions : IActions
         List<ObjectPoint> okButtonPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.OkButton, 0.7f);
 
         return okButtonPoint.Count > 0;
+    }
+
+    public bool DoesTagExists(Tag tag, float score = 0f)
+    {
+        _logger.LogInformation(nameof(DoesTagExists));
+
+        List<ObjectPoint> objects = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, tag, score);
+
+        return objects.Count > 0;
     }
 
     public void ClickScreen()

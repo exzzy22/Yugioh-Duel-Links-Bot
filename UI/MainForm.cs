@@ -35,7 +35,7 @@ public partial class MainForm : Form
     {
         if (EventCheckBox.Checked)
         {
-            //StartEventDuels();
+            StartEventDuels();
         }
         else
         {
@@ -70,19 +70,17 @@ public partial class MainForm : Form
         StartStopButton.BackColor = Color.Red;
         StartStopButton.Enabled = true;
 
-        //_task = Task.Run(async () => { await _logic.StartNetworkInterruptionChecker(_cts.Token); });
-
         _logic.StartDuelWorldLoop(_cts.Token, selected);
     }
 
-    private async Task StartEventDuels()
+    private void StartEventDuels()
     {
         StartStopButton.Enabled = false;
 
         if (StartStopButton.Text.Equals(STOP_TEXT))
         {
             StartStopButton.Text = STOPPING_TEXT;
-            await _cts.CancelAsync();
+            _cts.Cancel();
             _cts.Dispose();
             StartStopButton.BackColor = Color.White;
             StartStopButton.Text = START_TEXT;
@@ -94,11 +92,15 @@ public partial class MainForm : Form
             return;
         }
 
+        List<Tag> selected = DuelistsListBox.CheckedItems
+            .GetValues<string, Tag>()
+            .ToList();
+
         StartStopButton.Text = STOP_TEXT;
         StartStopButton.BackColor = Color.Red;
         StartStopButton.Enabled = true;
 
-        await _logic.StartEventDueldLoop(_cts.Token);
+        _logic.StartEventDueldLoop(_cts.Token);
     }
 
 

@@ -30,7 +30,7 @@ public class ImageFinder : IImageFinder
     {
         string tempScreenshotPath = CreateScreenshot(processName);
 
-        List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tags);
+        List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tags, threshold);
 
         File.Delete(tempScreenshotPath);
 
@@ -41,11 +41,22 @@ public class ImageFinder : IImageFinder
     {
         string tempScreenshotPath = CreateScreenshot(processName);
 
-        List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tag);
+        List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tag, threshold);
 
         File.Delete(tempScreenshotPath);
 
         return ocbjectPoints;
+    }
+
+    public bool DoesImageExistssML(string processName, Tag tag, float threshold = 0f)
+    {
+        string tempScreenshotPath = CreateScreenshot(processName);
+
+        List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tag, threshold);
+
+        File.Delete(tempScreenshotPath);
+
+        return ocbjectPoints.Count > 0;
     }
 
     public Point? GetImageLocationCV(string imageName, string processName)

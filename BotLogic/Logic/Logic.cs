@@ -60,7 +60,7 @@ public class Logic : ILogic
 
                     _logger.LogInformation("Duel Over");
 
-                    _actions.ClickPopUpDialogs();
+                    _actions.ClickPopUpDialogs(_actions.IsOnHomepage);
                 }
 
                 _actions.MoveScreenRight();
@@ -73,7 +73,7 @@ public class Logic : ILogic
         }
     }
 
-    public async Task StartEventDueldLoop(CancellationToken cancellationToken)
+    public void StartEventDueldLoop(CancellationToken cancellationToken)
     {
         try
         {
@@ -81,31 +81,36 @@ public class Logic : ILogic
             {
                 List<ObjectPoint> assistDuelPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.AssistDuelButton);
 
-                if (assistDuelPoint.Count > 0)
+                _logger.LogInformation("Found {Count} AssistedDuelButtons", assistDuelPoint.Count);
+
+                if (assistDuelPoint.Count < 1)
                 {
-                    _actions.StartDuel(assistDuelPoint.First());
+                    _actions.CheckForNetworkInterruption();
                 }
                 else
                 {
-                    _mouseSimulator.DoMouseScroll(-500);
-                    continue;
+                    ObjectPoint buttonPoint = assistDuelPoint.First();
+                    bool buttonPressed = _actions.StartDuel(buttonPoint);
+
+                    int duelCheckCounter = 0;
+                    while (!_actions.IsDuelOver())
+                    {
+                        Thread.Sleep(10000);
+                        if (duelCheckCounter > 4)
+                        {
+                            bool result = _actions.CheckForNetworkInterruption();
+
+                            if (!result) _actions.ClickScreen();
+                        }
+                        duelCheckCounter++;
+                    }
+
+                    _logger.LogInformation("Duel Over");
+
+                    _actions.ClickPopUpDialogs(() => _imageFinder.DoesImageExistssML(ProcessNames.DUEL_LINKS, Tag.AssistDuelButton));
+
+                    Thread.Sleep(2000);
                 }
-
-                await Task.Delay(4000, cancellationToken);
-                _actions.ClickDuelistDialogUntilDissapers();
-                await Task.Delay(4000, cancellationToken);
-                _actions.StartAutoDuel();
-                await Task.Delay(2000, cancellationToken);
-
-                while (!_actions.IsDuelOver())
-                {
-                    await Task.Delay(10000, cancellationToken);
-                }
-
-                _logger.LogInformation("Duel Over");
-
-                _actions.ClickPopUpDialogs();
-
             }
         }
         catch (OperationCanceledException)

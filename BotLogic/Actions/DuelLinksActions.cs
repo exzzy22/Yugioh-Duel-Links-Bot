@@ -5,6 +5,8 @@ using MLDetection;
 using MLDetection.Models;
 using ScreenCapture.Helpers;
 using System.Drawing;
+using System.Windows;
+using Point = System.Drawing.Point;
 
 namespace BotLogic.Actions;
 
@@ -161,7 +163,7 @@ public class DuelLinksActions : IActions
         return _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, duelistTypes, 0.7f);
     }
 
-    public void ClickPopUpDialogs(Func<bool> checkHomepage)
+    public void ClickPopUpDialogs(Func<bool> checkHomepage, CancellationToken cancellationToken)
     {
         _logger.LogInformation(nameof(ClickPopUpDialogs));
 
@@ -170,6 +172,7 @@ public class DuelLinksActions : IActions
 
         while (!homepageexists)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
 
             if (clickableButtons.Count > 0)
@@ -185,16 +188,20 @@ public class DuelLinksActions : IActions
             homepageexists = checkHomepage();
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
         clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
 
         while (clickableButtons.Count > 0)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             _mouseSimulator.SimulateMouseClick(clickableButtons.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
             Thread.Sleep(3000);
 
             clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
             Thread.Sleep(3000);
         }
+
+        cancellationToken.ThrowIfCancellationRequested();
     }
 
     public bool IsOnHomepage()
@@ -211,11 +218,23 @@ public class DuelLinksActions : IActions
         return false;
     }
 
+    public bool DoesAssistButtonExists()
+    {
+        bool result = _imageFinder.DoesImageExistssML(ProcessNames.DUEL_LINKS, Tag.AssistDuelButton);
+
+        if (!result)
+        {
+            _mouseSimulator.DoMouseScroll(-500);
+        }
+
+        return result;
+    }
+
     public bool IsDuelOver()
     {
         _logger.LogInformation(nameof(IsDuelOver));
 
-        List<ObjectPoint> okButtonPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.OkButton, 0.7f);
+        List<ObjectPoint> okButtonPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.OkButton, 0.5f);
 
         return okButtonPoint.Count > 0;
     }
@@ -253,5 +272,32 @@ public class DuelLinksActions : IActions
         }
 
         return false;
+    }
+
+    public bool ChangeWorld(Tag world)
+    {
+        List<ObjectPoint> worldMenu = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.WorldMenu);
+
+        if (worldMenu.Count < 1)
+        {
+            return false;
+        }
+
+        _mouseSimulator.SimulateMouseClick(worldMenu.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+
+        Thread.Sleep(2000);
+
+        List<ObjectPoint> worldToGo = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, world);
+
+        if (worldMenu.Count < 1)
+        {
+            return false;
+        }
+
+        _mouseSimulator.SimulateMouseClick(worldToGo.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+
+        Thread.Sleep(9000);
+
+        return true;
     }
 }

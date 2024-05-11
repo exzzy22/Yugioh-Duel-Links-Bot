@@ -111,7 +111,7 @@ public class ImageFinder : IImageFinder
 
         using (Bitmap bmp = new Bitmap(tempScreenshotPath))
         {
-            int marginOffset = (int)(0.15 * bmp.Height); // 15% offset from margins
+            int marginOffset = (int)(0.16 * bmp.Height); // 15% offset from margins
 
             switch (alignment)
             {

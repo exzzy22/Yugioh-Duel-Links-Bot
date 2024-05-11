@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <None Update="PredictionModel.mlnet">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

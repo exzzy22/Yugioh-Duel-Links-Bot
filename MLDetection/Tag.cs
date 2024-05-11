@@ -17,5 +17,17 @@ public enum Tag
     CancelButton,
     AssistDuelButton,
     AutoDuelButton,
-    RetryButton
+    RetryButton,
+    Gate,
+    Ranked,
+    WorldMenu,
+    DuelButton,
+    WorldDM,
+    WorldGX,
+    Word5DS,
+    WorldZX,
+    WordlAV,
+    WorldVR,
+    World7,
+    WorldDSOD,
 }

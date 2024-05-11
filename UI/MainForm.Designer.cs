@@ -32,6 +32,7 @@
             richTextBoxLogControl = new Serilog.Sinks.WinForms.Core.RichTextBoxLogControl();
             DuelistsListBox = new CheckedListBox();
             EventCheckBox = new CheckBox();
+            cycleWorldCheckBox = new CheckBox();
             SuspendLayout();
             // 
             // StartStopButton
@@ -76,11 +77,22 @@
             EventCheckBox.Text = "EventCheckBox";
             EventCheckBox.UseVisualStyleBackColor = true;
             // 
+            // cycleWorldCheckBox
+            // 
+            cycleWorldCheckBox.AutoSize = true;
+            cycleWorldCheckBox.Location = new Point(323, 75);
+            cycleWorldCheckBox.Name = "cycleWorldCheckBox";
+            cycleWorldCheckBox.Size = new Size(95, 19);
+            cycleWorldCheckBox.TabIndex = 4;
+            cycleWorldCheckBox.Text = "Cycle Worlds";
+            cycleWorldCheckBox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(810, 611);
+            Controls.Add(cycleWorldCheckBox);
             Controls.Add(EventCheckBox);
             Controls.Add(DuelistsListBox);
             Controls.Add(richTextBoxLogControl);
@@ -97,5 +109,6 @@
         private Serilog.Sinks.WinForms.Core.RichTextBoxLogControl richTextBoxLogControl;
         private CheckedListBox DuelistsListBox;
         private CheckBox EventCheckBox;
+        private CheckBox cycleWorldCheckBox;
     }
 }

@@ -11,7 +11,6 @@ public partial class MainForm : Form
     private const string STOP_TEXT = "Stop";
     private const string STOPPING_TEXT = "Stopping";
     private CancellationTokenSource _cts = new ();
-    private Task? _task;
 
     private readonly Dictionary<string, Tag> _duelists = new Dictionary<string, Tag> 
     {
@@ -25,6 +24,7 @@ public partial class MainForm : Form
     public MainForm(ILogic logic, ILogger<MainForm> logger)
     {
         InitializeComponent();
+        cycleWorldCheckBox.Checked = true;
         _logic = logic;
         DuelistsListBox.DataSource = new BindingSource(_duelists, null);
         DuelistsListBox.DisplayMember = "Key";
@@ -56,7 +56,6 @@ public partial class MainForm : Form
             StartStopButton.Text = START_TEXT;
             _cts = new();
             StartStopButton.Enabled = true;
-            _task?.Dispose();
             _logger.LogInformation("Program stopped");
 
             return;
@@ -70,7 +69,7 @@ public partial class MainForm : Form
         StartStopButton.BackColor = Color.Red;
         StartStopButton.Enabled = true;
 
-        _logic.StartDuelWorldLoop(_cts.Token, selected);
+        _logic.StartDuelWorldsLoop(_cts.Token, selected, cycleWorldCheckBox.Checked);
     }
 
     private void StartEventDuels()
@@ -86,7 +85,6 @@ public partial class MainForm : Form
             StartStopButton.Text = START_TEXT;
             _cts = new();
             StartStopButton.Enabled = true;
-            _task?.Dispose();
             _logger.LogInformation("Program stopped");
 
             return;

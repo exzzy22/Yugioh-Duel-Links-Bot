@@ -4,6 +4,7 @@ using BotLogic.MouseSimulator;
 using Microsoft.Extensions.Logging;
 using MLDetection;
 using MLDetection.Models;
+using System.Collections.Immutable;
 
 namespace BotLogic.Logic;
 
@@ -23,15 +24,64 @@ public class Logic : ILogic
 
     }
 
-    public void StartDuelWorldLoop(CancellationToken cancellationToken, List<Tag> duelistTypes)
+    public void StartDuelWorldsLoop(CancellationToken cancellationToken, List<Tag> duelistTypes, bool changeWorld)
+    {
+        if (!changeWorld)
+        {
+            StartDuelWorldLoop(cancellationToken, duelistTypes, changeWorld);
+
+            return;
+        }
+
+        ImmutableList<Tag> duelWorlds = Tags.Worlds();
+        int currentIndex = 0;
+        bool isFirstIteration = true;
+
+        while (true)
+        {
+            if (!isFirstIteration)
+            {
+                Tag currentWorld = duelWorlds[currentIndex];
+                _logger.LogInformation("Change the world to: {world}", currentWorld);
+
+
+                bool isChanged = _actions.ChangeWorld(currentWorld);
+
+                if (!isChanged)
+                {
+                    bool result = _actions.CheckForNetworkInterruption();
+                }
+            }
+
+            StartDuelWorldLoop(cancellationToken, duelistTypes, changeWorld);
+
+            currentIndex = (currentIndex + 1) % duelWorlds.Count;
+
+            isFirstIteration = false;
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                break;
+            }
+        }
+
+    }
+
+    public void StartDuelWorldLoop(CancellationToken cancellationToken, List<Tag> duelistTypes, bool changeWorld)
     {
         try
         {
+            int homepagesChecked = 0;
+
             while (!cancellationToken.IsCancellationRequested)
             {
+                if(changeWorld && homepagesChecked > 4) break;
+
                 List<ObjectPoint> duelistsOnHomepage = _actions.GetAllWorldDuelistsOnScreen(duelistTypes);
 
                 _logger.LogInformation("Found {Count} Duelists", duelistsOnHomepage.Count);
+
+                cancellationToken.ThrowIfCancellationRequested();
 
                 if (duelistsOnHomepage.Count < 1)
                 {
@@ -48,26 +98,33 @@ public class Logic : ILogic
                     int duelCheckCounter = 0;
                     while (!_actions.IsDuelOver())
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         Thread.Sleep(10000);
                         if (duelCheckCounter > 4)
                         {
                             bool result = _actions.CheckForNetworkInterruption();
 
-                            if(!result) _actions.ClickScreen();
+                            if (!result) _actions.ClickScreen();
                         }
                         duelCheckCounter++;
                     }
 
                     _logger.LogInformation("Duel Over");
 
-                    _actions.ClickPopUpDialogs(_actions.IsOnHomepage);
+                    _actions.ClickPopUpDialogs(_actions.IsOnHomepage, cancellationToken);
                 }
 
+                cancellationToken.ThrowIfCancellationRequested();
                 _actions.MoveScreenRight();
                 Thread.Sleep(2000);
+                homepagesChecked++;
             }
         }
         catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Stopping program");
+        }
+        finally
         {
             _logger.LogInformation("Stopping program");
         }
@@ -107,7 +164,7 @@ public class Logic : ILogic
 
                     _logger.LogInformation("Duel Over");
 
-                    _actions.ClickPopUpDialogs(() => _imageFinder.DoesImageExistssML(ProcessNames.DUEL_LINKS, Tag.AssistDuelButton));
+                    _actions.ClickPopUpDialogs(_actions.DoesAssistButtonExists, cancellationToken);
 
                     Thread.Sleep(2000);
                 }

@@ -1,9 +1,13 @@
-﻿namespace MLDetection;
+﻿using System.Collections.Immutable;
+
+namespace MLDetection;
 
 public static class Tags
 {
     public static Tag GetTag(string tagName)
     {
+        tagName = tagName.Replace(":", "").Trim();
+
         if (Enum.TryParse(tagName, out Tag tag))
         {
             return tag;
@@ -57,6 +61,21 @@ public static class Tags
             Tag.WorldDuelist,
             Tag.LegendaryDuelist,
             Tag.VagabondDuelist,
+        ];
+    }
+
+    public static ImmutableList<Tag> Worlds() 
+    {
+        return
+        [
+            Tag.WorldDM,
+            Tag.WorldDSOD,
+            Tag.WorldGX,
+            Tag.Word5DS,
+            Tag.WorldZX,
+            Tag.WordlAV,
+            Tag.WorldVR,
+            Tag.World7,
         ];
     }
 }

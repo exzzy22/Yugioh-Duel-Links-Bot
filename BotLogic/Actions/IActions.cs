@@ -12,9 +12,11 @@ public interface IActions
     public void MoveScreenRight();
     public void MoveScreenLeft();
     List<ObjectPoint> GetAllWorldDuelistsOnScreen(List<Tag> duelistTypes);
-    public void ClickPopUpDialogs(Func<bool> checkHomepage);
+    public void ClickPopUpDialogs(Func<bool> checkHomepage, CancellationToken cancellationToken);
     public bool IsOnHomepage();
+    public bool DoesAssistButtonExists();
     public bool IsDuelOver();
     public bool DoesTagExists(Tag tag, float score = 0f);
     public bool CheckForNetworkInterruption();
+    public bool ChangeWorld(Tag world);
 }

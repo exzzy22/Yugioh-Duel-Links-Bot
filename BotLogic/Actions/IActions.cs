@@ -7,6 +7,7 @@ public interface IActions
 {
     public void ClickScreen();
     public bool StartDuel(ObjectPoint objectPoint);
+    public void OpenGateDuel();
     public void ClickDuelistDialogUntilDissapers();
     public void StartAutoDuel();
     public void MoveScreenRight();
@@ -19,4 +20,6 @@ public interface IActions
     public bool DoesTagExists(Tag tag, float score = 0f);
     public bool CheckForNetworkInterruption();
     public bool ChangeWorld(Tag world);
+    public void OpenGate();
+    public bool DoesGateExists();
 }

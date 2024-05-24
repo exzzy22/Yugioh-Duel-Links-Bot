@@ -4,8 +4,6 @@ using Microsoft.Extensions.Logging;
 using MLDetection;
 using MLDetection.Models;
 using ScreenCapture.Helpers;
-using System.Drawing;
-using System.Windows;
 using Point = System.Drawing.Point;
 
 namespace BotLogic.Actions;
@@ -120,6 +118,30 @@ public class DuelLinksActions : IActions
         _mouseSimulator.SimulateMouseClick(autoDialog.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 
+    public void OpenGateDuel()
+    {
+        _logger.LogInformation(nameof(OpenGateDuel));
+
+        int retryCount = 0;
+
+        Point? duel = _imageFinder.GetImageLocationCV(ImageNames.DUEL, ProcessNames.DUEL_LINKS);
+
+        while (!duel.HasValue)
+        {
+            if (retryCount > 3) return;
+
+            duel = _imageFinder.GetImageLocationCV(ImageNames.DUEL, ProcessNames.DUEL_LINKS);
+            retryCount++;
+        }
+
+        _mouseSimulator.SimulateMouseClick(duel.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+
+        Thread.Sleep(4000);
+
+        ClickDuelistDialogUntilDissapers();
+    }
+
+
     public void MoveScreenLeft()
     {
         _logger.LogInformation(nameof(MoveScreenLeft));
@@ -218,6 +240,13 @@ public class DuelLinksActions : IActions
         return false;
     }
 
+    public bool DoesGateExists()
+    {
+        ObjectPoint? gate = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.Gate).FirstOrDefault();
+
+        return gate is not null;
+    }
+
     public bool DoesAssistButtonExists()
     {
         bool result = _imageFinder.DoesImageExistssML(ProcessNames.DUEL_LINKS, Tag.AssistDuelButton);
@@ -276,10 +305,11 @@ public class DuelLinksActions : IActions
 
     public bool ChangeWorld(Tag world)
     {
-        List<ObjectPoint> worldMenu = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.WorldMenu);
+        List<ObjectPoint> worldMenu = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.WorldMenu, 0.5f);
 
         if (worldMenu.Count < 1)
         {
+            _logger.LogError("No world menu button");
             return false;
         }
 
@@ -287,10 +317,11 @@ public class DuelLinksActions : IActions
 
         Thread.Sleep(2000);
 
-        List<ObjectPoint> worldToGo = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, world);
+        List<ObjectPoint> worldToGo = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, world, 0.35f);
 
-        if (worldMenu.Count < 1)
+        if (worldToGo.Count < 1)
         {
+            _logger.LogError("No world to go");
             return false;
         }
 
@@ -299,5 +330,24 @@ public class DuelLinksActions : IActions
         Thread.Sleep(9000);
 
         return true;
+    }
+
+    public void OpenGate()
+    {
+        _logger.LogInformation(nameof(OpenGate));
+
+        int retryCount = 0;
+
+        ObjectPoint? gate = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.Gate).FirstOrDefault();
+
+        while (gate is null)
+        {
+            if (retryCount > 3) return;
+
+            gate = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.Gate).FirstOrDefault();
+            retryCount++;
+        }
+
+        _mouseSimulator.SimulateMouseClick(gate.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 }

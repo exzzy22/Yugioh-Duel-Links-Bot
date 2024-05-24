@@ -9,6 +9,7 @@ public static class ImageNames
     public const string GATE = "Gate.png";
     public const string PVP_ARENA = "PvPArena.png";
     public const string SHOP = "Shop.png";
+    public const string DUEL = "Duel.png";
 
     public static List<string> HomepageImages()
     {

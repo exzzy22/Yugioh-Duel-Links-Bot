@@ -33,7 +33,11 @@ public partial class MainForm : Form
 
     private void StartStopButton_Click(object sender, EventArgs e)
     {
-        if (EventCheckBox.Checked)
+        if (GateDuelCheckBox.Checked)
+        {
+            StartGateDuels();
+        }
+        else if (EventCheckBox.Checked)
         {
             StartEventDuels();
         }
@@ -99,6 +103,35 @@ public partial class MainForm : Form
         StartStopButton.Enabled = true;
 
         _logic.StartEventDueldLoop(_cts.Token);
+    }
+
+    private void StartGateDuels()
+    {
+        StartStopButton.Enabled = false;
+
+        if (StartStopButton.Text.Equals(STOP_TEXT))
+        {
+            StartStopButton.Text = STOPPING_TEXT;
+            _cts.Cancel();
+            _cts.Dispose();
+            StartStopButton.BackColor = Color.White;
+            StartStopButton.Text = START_TEXT;
+            _cts = new();
+            StartStopButton.Enabled = true;
+            _logger.LogInformation("Program stopped");
+
+            return;
+        }
+
+        List<Tag> selected = DuelistsListBox.CheckedItems
+            .GetValues<string, Tag>()
+            .ToList();
+
+        StartStopButton.Text = STOP_TEXT;
+        StartStopButton.BackColor = Color.Red;
+        StartStopButton.Enabled = true;
+
+        _logic.StartGateLoop(_cts.Token);
     }
 
 

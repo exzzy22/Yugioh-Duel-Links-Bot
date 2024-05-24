@@ -44,13 +44,15 @@ public class Logic : ILogic
                 Tag currentWorld = duelWorlds[currentIndex];
                 _logger.LogInformation("Change the world to: {world}", currentWorld);
 
-
                 bool isChanged = _actions.ChangeWorld(currentWorld);
 
                 if (!isChanged)
                 {
+                    _logger.LogError("World change failed");
                     bool result = _actions.CheckForNetworkInterruption();
                 }
+
+                if (cancellationToken.IsCancellationRequested) break;
             }
 
             StartDuelWorldLoop(cancellationToken, duelistTypes, changeWorld);
@@ -59,12 +61,10 @@ public class Logic : ILogic
 
             isFirstIteration = false;
 
-            if (cancellationToken.IsCancellationRequested)
-            {
-                break;
-            }
+            if (cancellationToken.IsCancellationRequested) break;
         }
 
+        _logger.LogInformation("Program stopped");
     }
 
     public void StartDuelWorldLoop(CancellationToken cancellationToken, List<Tag> duelistTypes, bool changeWorld)
@@ -107,6 +107,8 @@ public class Logic : ILogic
                             if (!result) _actions.ClickScreen();
                         }
                         duelCheckCounter++;
+
+                        if (cancellationToken.IsCancellationRequested) break;
                     }
 
                     _logger.LogInformation("Duel Over");
@@ -118,6 +120,8 @@ public class Logic : ILogic
                 _actions.MoveScreenRight();
                 Thread.Sleep(2000);
                 homepagesChecked++;
+
+                if (cancellationToken.IsCancellationRequested) break;
             }
         }
         catch (OperationCanceledException)
@@ -128,6 +132,8 @@ public class Logic : ILogic
         {
             _logger.LogInformation("Stopping program");
         }
+
+        _logger.LogInformation("Program stopped");
     }
 
     public void StartEventDueldLoop(CancellationToken cancellationToken)
@@ -142,7 +148,16 @@ public class Logic : ILogic
 
                 if (assistDuelPoint.Count < 1)
                 {
-                    _actions.CheckForNetworkInterruption();
+                    bool isNetworkInterUpted = _actions.CheckForNetworkInterruption();
+
+                    if (!isNetworkInterUpted)
+                    {
+                        _actions.ClickScreen();
+                        Thread.Sleep(2000);
+                        _actions.ClickPopUpDialogs(_actions.DoesAssistButtonExists, cancellationToken);
+                    }
+
+                    if(cancellationToken.IsCancellationRequested) break;
                 }
                 else
                 {
@@ -160,6 +175,8 @@ public class Logic : ILogic
                             if (!result) _actions.ClickScreen();
                         }
                         duelCheckCounter++;
+
+                        if (cancellationToken.IsCancellationRequested) break;
                     }
 
                     _logger.LogInformation("Duel Over");
@@ -175,5 +192,53 @@ public class Logic : ILogic
             _logger.LogInformation("Stopping program");
         }
 
+        _logger.LogInformation("Program stopped");
+    }
+
+    public void StartGateLoop(CancellationToken cancellationToken)
+    {
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                _actions.OpenGate();
+                Thread.Sleep(5000);
+
+                _actions.OpenGateDuel();
+                Thread.Sleep(3000);
+
+                _actions.StartAutoDuel();
+
+                int duelCheckCounter = 0;
+                while (!_actions.IsDuelOver())
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    Thread.Sleep(10000);
+                    if (duelCheckCounter > 4)
+                    {
+                        bool result = _actions.CheckForNetworkInterruption();
+
+                        if (!result) _actions.ClickScreen();
+                    }
+                    duelCheckCounter++;
+
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
+
+                _logger.LogInformation("Duel Over");
+
+                _actions.ClickPopUpDialogs(_actions.DoesGateExists, cancellationToken);
+
+                Thread.Sleep(2000);
+
+                if (cancellationToken.IsCancellationRequested) break;
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Stopping program");
+        }
+
+        _logger.LogInformation("Program stopped");
     }
 }

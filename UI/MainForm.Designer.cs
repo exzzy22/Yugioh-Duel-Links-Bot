@@ -33,6 +33,7 @@
             DuelistsListBox = new CheckedListBox();
             EventCheckBox = new CheckBox();
             cycleWorldCheckBox = new CheckBox();
+            GateDuelCheckBox = new CheckBox();
             SuspendLayout();
             // 
             // StartStopButton
@@ -87,11 +88,22 @@
             cycleWorldCheckBox.Text = "Cycle Worlds";
             cycleWorldCheckBox.UseVisualStyleBackColor = true;
             // 
+            // GateDuelCheckBox
+            // 
+            GateDuelCheckBox.AutoSize = true;
+            GateDuelCheckBox.Location = new Point(324, 21);
+            GateDuelCheckBox.Name = "GateDuelCheckBox";
+            GateDuelCheckBox.Size = new Size(74, 19);
+            GateDuelCheckBox.TabIndex = 5;
+            GateDuelCheckBox.Text = "GateDuel";
+            GateDuelCheckBox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(810, 611);
+            Controls.Add(GateDuelCheckBox);
             Controls.Add(cycleWorldCheckBox);
             Controls.Add(EventCheckBox);
             Controls.Add(DuelistsListBox);
@@ -110,5 +122,6 @@
         private CheckedListBox DuelistsListBox;
         private CheckBox EventCheckBox;
         private CheckBox cycleWorldCheckBox;
+        private CheckBox GateDuelCheckBox;
     }
 }

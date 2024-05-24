@@ -21,6 +21,9 @@
     <None Update="Images\Auto-Duel.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\Duel.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Images\DuelStudio.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

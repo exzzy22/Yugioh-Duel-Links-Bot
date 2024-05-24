@@ -26,18 +26,18 @@ public class ImageFinder : IImageFinder
         _logger = logger;
     }
 
-    public List<ObjectPoint> GetImagesLocationsML(string processName, List<Tag>? tags = null, float threshold = 0f)
+    public List<ObjectPoint> GetImagesLocationsML(string processName, List<Tag>? tags = null, float threshold = 0.5f)
     {
         string tempScreenshotPath = CreateScreenshot(processName);
 
-        List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tags, threshold);
+        List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, threshold, tags);
 
         File.Delete(tempScreenshotPath);
 
         return ocbjectPoints;
     }
 
-    public List<ObjectPoint> GetImagesLocationsML(string processName, Tag tag, float threshold = 0f)
+    public List<ObjectPoint> GetImagesLocationsML(string processName, Tag tag, float threshold = 0.5f)
     {
         string tempScreenshotPath = CreateScreenshot(processName);
 
@@ -48,7 +48,7 @@ public class ImageFinder : IImageFinder
         return ocbjectPoints;
     }
 
-    public bool DoesImageExistssML(string processName, Tag tag, float threshold = 0f)
+    public bool DoesImageExistssML(string processName, Tag tag, float threshold = 0.5f)
     {
         string tempScreenshotPath = CreateScreenshot(processName);
 

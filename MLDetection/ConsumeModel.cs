@@ -6,7 +6,7 @@ namespace MLDetection;
 
 public class ConsumeModel : IConsumeModel
 {
-    public List<ObjectPoint> GetObjects(string imagePath, List<Tag>? tags = null, float threshold = 0f)
+    public List<ObjectPoint> GetObjects(string imagePath, float threshold, List<Tag>? tags = null)
     {
         var image = MLImage.CreateFromFile(imagePath);
 
@@ -27,7 +27,7 @@ public class ConsumeModel : IConsumeModel
         return GetObjects(input, threshold, tags ?? []);
     }
 
-    public List<ObjectPoint> GetObjects(string imagePath, Tag tag, float threshold = 0f)
+    public List<ObjectPoint> GetObjects(string imagePath, Tag tag, float threshold)
     {
         var image = MLImage.CreateFromFile(imagePath);
 
@@ -84,6 +84,7 @@ public class ConsumeModel : IConsumeModel
         return middlePoints
             .Where(i => tags.Contains(i.Tag))
             .Where(x => x.Score > threshold)
+            .OrderByDescending(x => x.Score)
             .ToList();
     }
 }

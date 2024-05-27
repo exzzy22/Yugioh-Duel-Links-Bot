@@ -1,3 +1,4 @@
+using BotLogic;
 using BotLogic.Actions;
 using BotLogic.ImageFinder;
 using BotLogic.Logic;
@@ -43,6 +44,8 @@ internal static class Program
                 services.AddTransient<IScreenCapturer, WindowsScreenCapturer>();
                 services.AddTransient<IHelpers, Helpers>();
                 services.AddTransient<IConsumeModel, ConsumeModel>();
+                services.AddSingleton<UserConfiguration>();
+                services.AddSingleton<ImageNamesService>();
                 services.AddTransient<MainForm>();
                 //services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(GetLogger(), true));
             });

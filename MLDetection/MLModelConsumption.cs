@@ -8,24 +8,29 @@ internal class MLModelConsumption
     public const int TrainingImageWidth = 2560;
     public const int TrainingImageHeight = 1440;
 
-
     private static string MLNetModelPath = Path.GetFullPath("PredictionModel.mlnet");
 
-    public static readonly Lazy<PredictionEngine<ModelInput, ModelOutput>> PredictEngine = new Lazy<PredictionEngine<ModelInput, ModelOutput>>(() => CreatePredictEngine(), true);
-
-
-    private static PredictionEngine<ModelInput, ModelOutput> CreatePredictEngine()
+    private static PredictionEngine<ModelInput, ModelOutput> CreatePredictEngine(UserConfiguration configuration)
     {
         var mlContext = new MLContext();
-        mlContext.GpuDeviceId = 0;
-        mlContext.FallbackToCpu = false;
+        if (configuration.UseGpu)
+        {
+            mlContext.GpuDeviceId = 0;
+            mlContext.FallbackToCpu = false;
+        }
+        else 
+        {
+            mlContext.GpuDeviceId = null;
+            mlContext.FallbackToCpu = true;
+        }
+
         ITransformer mlModel = mlContext.Model.Load(MLNetModelPath, out var _);
         return mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(mlModel);
     }
 
-    public static ModelOutput Predict(ModelInput input)
+    public static ModelOutput Predict(ModelInput input, UserConfiguration configuration)
     {
-        var predEngine = PredictEngine.Value;
+        var predEngine = new Lazy<PredictionEngine<ModelInput, ModelOutput>>(() => CreatePredictEngine(configuration), true).Value;
         var output = predEngine.Predict(input);
 
         CalculateAspectAndOffset(input.Image.Width, input.Image.Height, TrainingImageWidth, TrainingImageHeight, out float xOffset, out float yOffset, out float aspect);

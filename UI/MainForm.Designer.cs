@@ -34,6 +34,8 @@
             EventCheckBox = new CheckBox();
             cycleWorldCheckBox = new CheckBox();
             GateDuelCheckBox = new CheckBox();
+            UseGpuCheckBox = new CheckBox();
+            LaptopCheckBox = new CheckBox();
             SuspendLayout();
             // 
             // StartStopButton
@@ -98,11 +100,35 @@
             GateDuelCheckBox.Text = "GateDuel";
             GateDuelCheckBox.UseVisualStyleBackColor = true;
             // 
+            // UseGpuCheckBox
+            // 
+            UseGpuCheckBox.AutoSize = true;
+            UseGpuCheckBox.Location = new Point(177, 22);
+            UseGpuCheckBox.Name = "UseGpuCheckBox";
+            UseGpuCheckBox.Size = new Size(70, 19);
+            UseGpuCheckBox.TabIndex = 6;
+            UseGpuCheckBox.Text = "Use Gpu";
+            UseGpuCheckBox.UseVisualStyleBackColor = true;
+            UseGpuCheckBox.CheckedChanged += UseGpuCheckBox_CheckedChanged;
+            // 
+            // LaptopCheckBox
+            // 
+            LaptopCheckBox.AutoSize = true;
+            LaptopCheckBox.Location = new Point(177, 46);
+            LaptopCheckBox.Name = "LaptopCheckBox";
+            LaptopCheckBox.Size = new Size(126, 19);
+            LaptopCheckBox.TabIndex = 7;
+            LaptopCheckBox.Text = "Use Laptop images";
+            LaptopCheckBox.UseVisualStyleBackColor = true;
+            LaptopCheckBox.CheckedChanged += LaptopCheckBox_CheckedChanged;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(810, 611);
+            Controls.Add(LaptopCheckBox);
+            Controls.Add(UseGpuCheckBox);
             Controls.Add(GateDuelCheckBox);
             Controls.Add(cycleWorldCheckBox);
             Controls.Add(EventCheckBox);
@@ -123,5 +149,7 @@
         private CheckBox EventCheckBox;
         private CheckBox cycleWorldCheckBox;
         private CheckBox GateDuelCheckBox;
+        private CheckBox UseGpuCheckBox;
+        private CheckBox LaptopCheckBox;
     }
 }

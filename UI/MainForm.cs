@@ -10,18 +10,19 @@ public partial class MainForm : Form
     private const string START_TEXT = "Start";
     private const string STOP_TEXT = "Stop";
     private const string STOPPING_TEXT = "Stopping";
-    private CancellationTokenSource _cts = new ();
+    private CancellationTokenSource _cts = new();
 
-    private readonly Dictionary<string, Tag> _duelists = new Dictionary<string, Tag> 
+    private readonly Dictionary<string, Tag> _duelists = new Dictionary<string, Tag>
     {
             { "World Duelist", MLDetection.Tag.WorldDuelist },
             { "Legendary Duelist", MLDetection.Tag.LegendaryDuelist },
             { "Vagabond Duelist", MLDetection.Tag.VagabondDuelist }
-    }; 
+    };
     private readonly ILogic _logic;
     private readonly ILogger<MainForm> _logger;
+    private UserConfiguration _userConfiguration;
 
-    public MainForm(ILogic logic, ILogger<MainForm> logger)
+    public MainForm(ILogic logic, ILogger<MainForm> logger, UserConfiguration userConfiguration)
     {
         InitializeComponent();
         cycleWorldCheckBox.Checked = true;
@@ -29,6 +30,9 @@ public partial class MainForm : Form
         DuelistsListBox.DataSource = new BindingSource(_duelists, null);
         DuelistsListBox.DisplayMember = "Key";
         _logger = logger;
+        _userConfiguration = userConfiguration;
+        UseGpuCheckBox.Checked = _userConfiguration.UseGpu;
+        LaptopCheckBox.Checked = _userConfiguration.IsLaptop;
     }
 
     private void StartStopButton_Click(object sender, EventArgs e)
@@ -137,6 +141,15 @@ public partial class MainForm : Form
 
     private void DuelistsListBox_SelectedIndexChanged(object sender, EventArgs e)
     {
+    }
 
+    private void UseGpuCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        _userConfiguration.UseGpu = UseGpuCheckBox.Checked;
+    }
+
+    private void LaptopCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        _userConfiguration.IsLaptop = LaptopCheckBox.Checked;
     }
 }

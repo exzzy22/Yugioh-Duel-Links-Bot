@@ -14,14 +14,15 @@ public class Logic : ILogic
     private readonly IImageFinder _imageFinder;
     private readonly IMouseSimulator _mouseSimulator;
     private readonly ILogger<Logic> _logger;
+    private readonly ImageNamesService _imageNamesService;
 
-    public Logic(IActions actions, IImageFinder imageFinder, IMouseSimulator mouseSimulatorq, ILogger<Logic> logger)
+    public Logic(IActions actions, IImageFinder imageFinder, IMouseSimulator mouseSimulatorq, ILogger<Logic> logger, ImageNamesService imageNamesService)
     {
         _actions = actions;
         _imageFinder = imageFinder;
         _mouseSimulator = mouseSimulatorq;
         _logger = logger;
-
+        _imageNamesService = imageNamesService;
     }
 
     public void StartDuelWorldsLoop(CancellationToken cancellationToken, List<Tag> duelistTypes, bool changeWorld)
@@ -136,7 +137,7 @@ public class Logic : ILogic
         _logger.LogInformation("Program stopped");
     }
 
-    public void StartEventDueldLoop(CancellationToken cancellationToken)
+    public void StartRaidEventDueldLoop(CancellationToken cancellationToken)
     {
         try
         {
@@ -232,6 +233,66 @@ public class Logic : ILogic
                 Thread.Sleep(2000);
 
                 if (cancellationToken.IsCancellationRequested) break;
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Stopping program");
+        }
+
+        _logger.LogInformation("Program stopped");
+    }
+
+    public void StartDuelistRoadEventDueldLoop(CancellationToken cancellationToken)
+    {
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var startButton = _imageFinder.GetImageLocationCV(_imageNamesService.Start ,ProcessNames.DUEL_LINKS);
+
+                if (!startButton.HasValue)
+                {
+                    _logger.LogInformation("Cant find start button");
+
+                    bool isNetworkInterUpted = _actions.CheckForNetworkInterruption();
+
+                    if (!isNetworkInterUpted)
+                    {
+                        _actions.ClickScreen();
+                        Thread.Sleep(2000);
+                        _actions.ClickPopUpDialogs(_actions.DoesAssistButtonExists, cancellationToken);
+                    }
+
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
+                else
+                {
+                    var diffbutton = _actions.OpenDuelistRoadDuel();
+
+                    bool buttonPressed = _actions.StartDuel(diffbutton);
+
+                    int duelCheckCounter = 0;
+                    while (!_actions.IsDuelOver())
+                    {
+                        Thread.Sleep(10000);
+                        if (duelCheckCounter > 4)
+                        {
+                            bool result = _actions.CheckForNetworkInterruption();
+
+                            if (!result) _actions.ClickScreen();
+                        }
+                        duelCheckCounter++;
+
+                        if (cancellationToken.IsCancellationRequested) break;
+                    }
+
+                    _logger.LogInformation("Duel Over");
+
+                    _actions.ClickPopUpDialogs(_actions.DoesStartButtonExists, cancellationToken);
+
+                    Thread.Sleep(2000);
+                }
             }
         }
         catch (OperationCanceledException)

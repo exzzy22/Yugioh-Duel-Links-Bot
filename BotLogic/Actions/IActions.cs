@@ -20,6 +20,8 @@ public interface IActions
     public bool DoesTagExists(Tag tag, float score = 0f);
     public bool CheckForNetworkInterruption();
     public bool ChangeWorld(Tag world);
+    public ObjectPoint OpenDuelistRoadDuel();
     public void OpenGate();
     public bool DoesGateExists();
+    public bool DoesStartButtonExists();
 }

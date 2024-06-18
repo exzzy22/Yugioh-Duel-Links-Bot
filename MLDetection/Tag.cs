@@ -30,4 +30,5 @@ public enum Tag
     WorldVR,
     World7,
     WorldDSOD,
+    CVImage
 }

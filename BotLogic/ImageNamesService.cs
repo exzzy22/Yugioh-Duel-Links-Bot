@@ -19,6 +19,9 @@ public class ImageNamesService
     public string PvPArena => GetImageName(nameof(PvPArena));
     public string Shop => GetImageName(nameof(Shop));
     public string Duel => GetImageName(nameof(Duel));
+    public string Start => GetImageName(nameof(Start));
+    public string TurboDuel => GetImageName(nameof(TurboDuel));
+    public string Hard => GetImageName(nameof(Hard));
 
     public List<string> HomepageImages()
     {
@@ -53,6 +56,12 @@ public class ImageNamesService
                 return isLaptop ? "Shop_Lap.png" : "Shop.png";
             case nameof(Duel):
                 return isLaptop ? "Duel_Lap.png" : "Duel.png";
+            case nameof(Start):
+                return isLaptop ? "Start_Lap.png" : "Start.png";
+            case nameof(TurboDuel):
+                return isLaptop ? "Turbo-Duel_Lap.png" : "Turbo-Duel.png";
+            case nameof(Hard):
+                return isLaptop ? "Hard_Lap.png" : "Hard.png";
             default:
                 // Handle unknown operation (return a default image name)
                 return "UnknownImage.png";

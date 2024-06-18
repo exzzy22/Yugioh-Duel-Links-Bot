@@ -101,6 +101,51 @@ public class DuelLinksActions : IActions
         }
     }
 
+    public ObjectPoint OpenDuelistRoadDuel()
+    {
+        _logger.LogInformation(nameof(OpenDuelistRoadDuel));
+
+        int retryCount = 0;
+
+        Point? startButton = _imageFinder.GetImageLocationCV(_imageNamesService.Start, ProcessNames.DUEL_LINKS);
+
+        while (!startButton.HasValue)
+        {
+            if (retryCount > 3) break;
+
+            startButton = _imageFinder.GetImageLocationCV(_imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS);
+            retryCount++;
+        }
+
+        _mouseSimulator.SimulateMouseClick(startButton.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+        Thread.Sleep(1000);
+        _mouseSimulator.SimulateMouseClick(startButton.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+        Thread.Sleep(3000);
+
+        Point? duelbutton = _imageFinder.GetImageLocationCV(_imageNamesService.TurboDuel, ProcessNames.DUEL_LINKS);
+
+        while (!duelbutton.HasValue)
+        {
+            duelbutton = _imageFinder.GetImageLocationCV(_imageNamesService.Duel, ProcessNames.DUEL_LINKS);
+        }
+        Thread.Sleep(1000);
+        _mouseSimulator.SimulateMouseClick(duelbutton.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+
+        ClickDuelistDialogUntilLevelSelectAppers();
+
+        Point? diffChose = _imageFinder.GetImageLocationCV(_imageNamesService.Hard, ProcessNames.DUEL_LINKS);
+
+        while (!diffChose.HasValue)
+        {
+            if (retryCount > 3) break;
+
+            diffChose = _imageFinder.GetImageLocationCV(_imageNamesService.Hard, ProcessNames.DUEL_LINKS);
+            retryCount++;
+        }
+
+        return new ObjectPoint { Score = 1, Tag = Tag.CVImage, Point = diffChose.Value };
+    }
+
     public void StartAutoDuel()
     { 
         _logger.LogInformation(nameof(StartAutoDuel));
@@ -261,6 +306,13 @@ public class DuelLinksActions : IActions
         return result;
     }
 
+    public bool DoesStartButtonExists()
+    {
+        bool result = _imageFinder.DoesImageExistsCV(_imageNamesService.Start, ProcessNames.DUEL_LINKS);
+
+        return result;
+    }
+
     public bool IsDuelOver()
     {
         _logger.LogInformation(nameof(IsDuelOver));
@@ -351,5 +403,23 @@ public class DuelLinksActions : IActions
         }
 
         _mouseSimulator.SimulateMouseClick(gate.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+    }
+
+    private void ClickDuelistDialogUntilLevelSelectAppers()
+    {
+        _logger.LogInformation(nameof(ClickDuelistDialogUntilLevelSelectAppers));
+
+        List<ObjectPoint> duelistDialogPoints = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
+
+        while (!_imageFinder.DoesImageExistsCV(_imageNamesService.Hard, ProcessNames.DUEL_LINKS))
+        {
+            foreach (ObjectPoint point in duelistDialogPoints)
+            {
+                _mouseSimulator.SimulateMouseClick(point.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+            }
+            Thread.Sleep(2000);
+
+            duelistDialogPoints = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
+        }
     }
 }

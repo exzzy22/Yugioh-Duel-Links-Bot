@@ -41,9 +41,13 @@ public partial class MainForm : Form
         {
             StartGateDuels();
         }
-        else if (EventCheckBox.Checked)
+        else if (RaidDuel.Checked)
         {
-            StartEventDuels();
+            StartRaidEventDuels();
+        }
+        else if (DuelistRoad.Checked)
+        {
+            StartDuelistRoadEventDuels();
         }
         else
         {
@@ -80,7 +84,7 @@ public partial class MainForm : Form
         _logic.StartDuelWorldsLoop(_cts.Token, selected, cycleWorldCheckBox.Checked);
     }
 
-    private void StartEventDuels()
+    private void StartRaidEventDuels()
     {
         StartStopButton.Enabled = false;
 
@@ -98,15 +102,36 @@ public partial class MainForm : Form
             return;
         }
 
-        List<Tag> selected = DuelistsListBox.CheckedItems
-            .GetValues<string, Tag>()
-            .ToList();
+        StartStopButton.Text = STOP_TEXT;
+        StartStopButton.BackColor = Color.Red;
+        StartStopButton.Enabled = true;
+
+        _logic.StartRaidEventDueldLoop(_cts.Token);
+    }
+
+    private void StartDuelistRoadEventDuels()
+    {
+        StartStopButton.Enabled = false;
+
+        if (StartStopButton.Text.Equals(STOP_TEXT))
+        {
+            StartStopButton.Text = STOPPING_TEXT;
+            _cts.Cancel();
+            _cts.Dispose();
+            StartStopButton.BackColor = Color.White;
+            StartStopButton.Text = START_TEXT;
+            _cts = new();
+            StartStopButton.Enabled = true;
+            _logger.LogInformation("Program stopped");
+
+            return;
+        }
 
         StartStopButton.Text = STOP_TEXT;
         StartStopButton.BackColor = Color.Red;
         StartStopButton.Enabled = true;
 
-        _logic.StartEventDueldLoop(_cts.Token);
+        _logic.StartDuelistRoadEventDueldLoop(_cts.Token);
     }
 
     private void StartGateDuels()
@@ -151,5 +176,10 @@ public partial class MainForm : Form
     private void LaptopCheckBox_CheckedChanged(object sender, EventArgs e)
     {
         _userConfiguration.IsLaptop = LaptopCheckBox.Checked;
+    }
+
+    private void RaidDuel_CheckedChanged(object sender, EventArgs e)
+    {
+
     }
 }

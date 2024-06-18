@@ -31,11 +31,12 @@
             StartStopButton = new Button();
             richTextBoxLogControl = new Serilog.Sinks.WinForms.Core.RichTextBoxLogControl();
             DuelistsListBox = new CheckedListBox();
-            EventCheckBox = new CheckBox();
+            RaidDuel = new CheckBox();
             cycleWorldCheckBox = new CheckBox();
             GateDuelCheckBox = new CheckBox();
             UseGpuCheckBox = new CheckBox();
             LaptopCheckBox = new CheckBox();
+            DuelistRoad = new CheckBox();
             SuspendLayout();
             // 
             // StartStopButton
@@ -70,20 +71,21 @@
             DuelistsListBox.TabIndex = 2;
             DuelistsListBox.SelectedIndexChanged += DuelistsListBox_SelectedIndexChanged;
             // 
-            // EventCheckBox
+            // RaidDuel
             // 
-            EventCheckBox.AutoSize = true;
-            EventCheckBox.Location = new Point(323, 46);
-            EventCheckBox.Name = "EventCheckBox";
-            EventCheckBox.Size = new Size(108, 19);
-            EventCheckBox.TabIndex = 3;
-            EventCheckBox.Text = "EventCheckBox";
-            EventCheckBox.UseVisualStyleBackColor = true;
+            RaidDuel.AutoSize = true;
+            RaidDuel.Location = new Point(323, 46);
+            RaidDuel.Name = "RaidDuel";
+            RaidDuel.Size = new Size(76, 19);
+            RaidDuel.TabIndex = 3;
+            RaidDuel.Text = "Raid Duel";
+            RaidDuel.UseVisualStyleBackColor = true;
+            RaidDuel.CheckedChanged += RaidDuel_CheckedChanged;
             // 
             // cycleWorldCheckBox
             // 
             cycleWorldCheckBox.AutoSize = true;
-            cycleWorldCheckBox.Location = new Point(323, 75);
+            cycleWorldCheckBox.Location = new Point(177, 71);
             cycleWorldCheckBox.Name = "cycleWorldCheckBox";
             cycleWorldCheckBox.Size = new Size(95, 19);
             cycleWorldCheckBox.TabIndex = 4;
@@ -122,16 +124,27 @@
             LaptopCheckBox.UseVisualStyleBackColor = true;
             LaptopCheckBox.CheckedChanged += LaptopCheckBox_CheckedChanged;
             // 
+            // DuelistRoad
+            // 
+            DuelistRoad.AutoSize = true;
+            DuelistRoad.Location = new Point(323, 71);
+            DuelistRoad.Name = "DuelistRoad";
+            DuelistRoad.Size = new Size(92, 19);
+            DuelistRoad.TabIndex = 8;
+            DuelistRoad.Text = "Duelist Road";
+            DuelistRoad.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(810, 611);
+            Controls.Add(DuelistRoad);
             Controls.Add(LaptopCheckBox);
             Controls.Add(UseGpuCheckBox);
             Controls.Add(GateDuelCheckBox);
             Controls.Add(cycleWorldCheckBox);
-            Controls.Add(EventCheckBox);
+            Controls.Add(RaidDuel);
             Controls.Add(DuelistsListBox);
             Controls.Add(richTextBoxLogControl);
             Controls.Add(StartStopButton);
@@ -146,10 +159,11 @@
         private Button StartStopButton;
         private Serilog.Sinks.WinForms.Core.RichTextBoxLogControl richTextBoxLogControl;
         private CheckedListBox DuelistsListBox;
-        private CheckBox EventCheckBox;
+        private CheckBox RaidDuel;
         private CheckBox cycleWorldCheckBox;
         private CheckBox GateDuelCheckBox;
         private CheckBox UseGpuCheckBox;
         private CheckBox LaptopCheckBox;
+        private CheckBox DuelistRoad;
     }
 }

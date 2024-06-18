@@ -7,6 +7,7 @@ public interface ILogic
     void StartDuelWorldsLoop(CancellationToken cancellationToken, List<Tag> duelistTypes, bool changeWorld);
 
     void StartDuelWorldLoop(CancellationToken cancellationToken, List<Tag> duelistTypes, bool changeWorld);
-    void StartEventDueldLoop(CancellationToken cancellationToken);
+    void StartRaidEventDueldLoop(CancellationToken cancellationToken);
+    void StartDuelistRoadEventDueldLoop(CancellationToken cancellationToken);
     void StartGateLoop(CancellationToken cancellationToken);
 }

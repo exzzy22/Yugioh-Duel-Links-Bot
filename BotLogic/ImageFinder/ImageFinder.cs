@@ -138,21 +138,26 @@ public class ImageFinder : IImageFinder
 
     private (Rectangle rectangle, double minVal, double maxVal) FindTemplateMatch(string tempScreenshotPath, string imagePath)
     {
-        Mat img = CvInvoke.Imread(tempScreenshotPath, ImreadModes.Grayscale);
-        Mat template = CvInvoke.Imread(imagePath, ImreadModes.Grayscale);
-        Size size = template.Size;
+        using (Mat img = CvInvoke.Imread(tempScreenshotPath, ImreadModes.Grayscale))
+        using (Mat template = CvInvoke.Imread(imagePath, ImreadModes.Grayscale))
+        {
+            Size size = template.Size;
 
-        Mat result = new();
-        CvInvoke.MatchTemplate(img, template, result, TemplateMatchingType.SqdiffNormed);
+            using (Mat result = new Mat())
+            {
+                CvInvoke.MatchTemplate(img, template, result, TemplateMatchingType.SqdiffNormed);
 
-        double minVal = 0, maxVal = 0;
-        Point minLoc = new(), maxLoc = new();
-        CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
+                double minVal = 0, maxVal = 0;
+                Point minLoc = new(), maxLoc = new();
+                CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
 
-        Rectangle rect = new Rectangle(minLoc, size);
+                Rectangle rect = new Rectangle(minLoc, size);
 
-        return (rect, minVal, maxVal);
+                return (rect, minVal, maxVal);
+            }
+        }
     }
+
 
     private string GetImagePath(string imageName)
     {

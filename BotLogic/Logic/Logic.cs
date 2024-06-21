@@ -250,8 +250,11 @@ public class Logic : ILogic
             while (!cancellationToken.IsCancellationRequested)
             {
                 var startButton = _imageFinder.GetImageLocationCV(_imageNamesService.Start ,ProcessNames.DUEL_LINKS);
+                var turboDuelButton = _imageFinder.GetImageLocationCV(_imageNamesService.TurboDuel, ProcessNames.DUEL_LINKS);
+                var duelButton = _imageFinder.GetImageLocationCV(_imageNamesService.Duel, ProcessNames.DUEL_LINKS);
 
-                if (!startButton.HasValue)
+
+                if (!startButton.HasValue && !turboDuelButton.HasValue && !duelButton.HasValue)
                 {
                     _logger.LogInformation("Cant find start button");
 
@@ -261,7 +264,7 @@ public class Logic : ILogic
                     {
                         _actions.ClickScreen();
                         Thread.Sleep(2000);
-                        _actions.ClickPopUpDialogs(_actions.DoesAssistButtonExists, cancellationToken);
+                        _actions.ClickPopUpDialogs(_actions.DoesStartButtonExists, cancellationToken);
                     }
 
                     if (cancellationToken.IsCancellationRequested) break;

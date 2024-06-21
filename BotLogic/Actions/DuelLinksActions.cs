@@ -109,22 +109,17 @@ public class DuelLinksActions : IActions
 
         Point? startButton = _imageFinder.GetImageLocationCV(_imageNamesService.Start, ProcessNames.DUEL_LINKS);
 
-        while (!startButton.HasValue)
+        if (startButton.HasValue)
         {
-            if (retryCount > 3) break;
-
-            startButton = _imageFinder.GetImageLocationCV(_imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS);
-            retryCount++;
+            _mouseSimulator.SimulateMouseClick(startButton.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+            Thread.Sleep(1000);
+            _mouseSimulator.SimulateMouseClick(startButton.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+            Thread.Sleep(3000);
         }
-
-        _mouseSimulator.SimulateMouseClick(startButton.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
-        Thread.Sleep(1000);
-        _mouseSimulator.SimulateMouseClick(startButton.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
-        Thread.Sleep(3000);
 
         Point? duelbutton = _imageFinder.GetImageLocationCV(_imageNamesService.TurboDuel, ProcessNames.DUEL_LINKS);
 
-        while (!duelbutton.HasValue)
+        if (!duelbutton.HasValue)
         {
             duelbutton = _imageFinder.GetImageLocationCV(_imageNamesService.Duel, ProcessNames.DUEL_LINKS);
         }

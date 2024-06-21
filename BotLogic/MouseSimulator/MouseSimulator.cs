@@ -18,8 +18,6 @@ public class MouseSimulator : IMouseSimulator
     {
         User32.MoveCursorToPoint(point.X, point.Y, hWnd, true);
 
-        _logger.LogInformation($"Click {point.X}, {point.Y}");
-
         User32.DoMouseClick();
     }
 }

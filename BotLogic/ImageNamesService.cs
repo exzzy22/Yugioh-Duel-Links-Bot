@@ -21,6 +21,7 @@ public class ImageNamesService
     public string Duel => GetImageName(nameof(Duel));
     public string Start => GetImageName(nameof(Start));
     public string TurboDuel => GetImageName(nameof(TurboDuel));
+    public string RushDuel => GetImageName(nameof(RushDuel));
     public string Hard => GetImageName(nameof(Hard));
 
     public List<string> HomepageImages()
@@ -60,6 +61,8 @@ public class ImageNamesService
                 return isLaptop ? "Start_Lap.png" : "Start.png";
             case nameof(TurboDuel):
                 return isLaptop ? "Turbo-Duel_Lap.png" : "Turbo-Duel.png";
+            case nameof(RushDuel):
+                return isLaptop ? "Rush-Duel_Lap.png" : "Rush-Duel.png";
             case nameof(Hard):
                 return isLaptop ? "Hard_Lap.png" : "Hard.png";
             default:

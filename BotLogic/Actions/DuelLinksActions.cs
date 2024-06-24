@@ -168,11 +168,20 @@ public class DuelLinksActions : IActions
 
         Point? duel = _imageFinder.GetImageLocationCV(_imageNamesService.Duel, ProcessNames.DUEL_LINKS);
 
+        if (!duel.HasValue)
+        {
+            duel = _imageFinder.GetImageLocationCV(_imageNamesService.RushDuel, ProcessNames.DUEL_LINKS);
+        }
+
         while (!duel.HasValue)
         {
             if (retryCount > 3) return;
 
             duel = _imageFinder.GetImageLocationCV(_imageNamesService.Duel, ProcessNames.DUEL_LINKS);
+            if (!duel.HasValue)
+            {
+                duel = _imageFinder.GetImageLocationCV(_imageNamesService.RushDuel, ProcessNames.DUEL_LINKS);
+            }
             retryCount++;
         }
 

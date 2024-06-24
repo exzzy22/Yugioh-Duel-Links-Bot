@@ -66,6 +66,9 @@
     <None Update="Images\RightArrow_Lap.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\Rush-Duel.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Images\Shop.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

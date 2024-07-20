@@ -141,6 +141,32 @@ public class DuelLinksActions : IActions
         return new ObjectPoint { Score = 1, Tag = Tag.CVImage, Point = diffChose.Value };
     }
 
+    public ObjectPoint OpenTagDuel()
+    {
+        _logger.LogInformation(nameof(OpenTagDuel));
+
+        int retryCount = 0;
+
+        Point? duelbutton = _imageFinder.GetImageLocationCV(_imageNamesService.TagDuel, ProcessNames.DUEL_LINKS);
+
+        Thread.Sleep(1000);
+        _mouseSimulator.SimulateMouseClick(duelbutton.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
+
+        ClickDuelistDialogUntilLevelSelectAppers();
+
+        Point? diffChose = _imageFinder.GetImageLocationCV(_imageNamesService.Hard, ProcessNames.DUEL_LINKS);
+
+        while (!diffChose.HasValue)
+        {
+            if (retryCount > 3) break;
+
+            diffChose = _imageFinder.GetImageLocationCV(_imageNamesService.Hard, ProcessNames.DUEL_LINKS);
+            retryCount++;
+        }
+
+        return new ObjectPoint { Score = 1, Tag = Tag.CVImage, Point = diffChose.Value };
+    }
+
     public void StartAutoDuel()
     { 
         _logger.LogInformation(nameof(StartAutoDuel));
@@ -313,6 +339,13 @@ public class DuelLinksActions : IActions
     public bool DoesStartButtonExists()
     {
         bool result = _imageFinder.DoesImageExistsCV(_imageNamesService.Start, ProcessNames.DUEL_LINKS);
+
+        return result;
+    }
+
+    public bool DoesTagDuelButtonExists()
+    {
+        bool result = _imageFinder.DoesImageExistsCV(_imageNamesService.TagDuel, ProcessNames.DUEL_LINKS);
 
         return result;
     }

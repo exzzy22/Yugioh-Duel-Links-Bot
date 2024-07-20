@@ -49,6 +49,10 @@ public partial class MainForm : Form
         {
             StartDuelistRoadEventDuels();
         }
+        else if (tagDuelCheckbox.Checked)
+        {
+            StartTagDuelDuels();
+        }
         else
         {
             StartWorldDuels();
@@ -161,6 +165,31 @@ public partial class MainForm : Form
         StartStopButton.Enabled = true;
 
         _logic.StartGateLoop(_cts.Token);
+    }
+
+    private void StartTagDuelDuels()
+    {
+        StartStopButton.Enabled = false;
+
+        if (StartStopButton.Text.Equals(STOP_TEXT))
+        {
+            StartStopButton.Text = STOPPING_TEXT;
+            _cts.Cancel();
+            _cts.Dispose();
+            StartStopButton.BackColor = Color.White;
+            StartStopButton.Text = START_TEXT;
+            _cts = new();
+            StartStopButton.Enabled = true;
+            _logger.LogInformation("Program stopped");
+
+            return;
+        }
+
+        StartStopButton.Text = STOP_TEXT;
+        StartStopButton.BackColor = Color.Red;
+        StartStopButton.Enabled = true;
+
+        _logic.StartTagDuelLoop(_cts.Token);
     }
 
 

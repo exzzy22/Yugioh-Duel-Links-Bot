@@ -24,4 +24,6 @@ public interface IActions
     public void OpenGate();
     public bool DoesGateExists();
     public bool DoesStartButtonExists();
+    ObjectPoint OpenTagDuel();
+    bool DoesTagDuelButtonExists();
 }

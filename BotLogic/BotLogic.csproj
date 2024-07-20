@@ -78,6 +78,9 @@
     <None Update="Images\Start.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\Tag_Duel.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Images\Turbo-Duel.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

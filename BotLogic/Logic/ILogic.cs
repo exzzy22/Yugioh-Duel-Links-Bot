@@ -10,4 +10,5 @@ public interface ILogic
     void StartRaidEventDueldLoop(CancellationToken cancellationToken);
     void StartDuelistRoadEventDueldLoop(CancellationToken cancellationToken);
     void StartGateLoop(CancellationToken cancellationToken);
+    void StartTagDuelLoop(CancellationToken cancellationToken);
 }

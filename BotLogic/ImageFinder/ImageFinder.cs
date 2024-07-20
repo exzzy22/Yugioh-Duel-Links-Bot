@@ -13,7 +13,7 @@ public class ImageFinder : IImageFinder
 {
     private const string IMAGES_FOLDER_NAME = "Images";
     private const double MAX_TRESHOLD = 0.9;
-    private const double MIN_TRESHOLD = 0.01;
+    private const double MIN_TRESHOLD = 0.1;
 
     private readonly IScreenCapturer _screenCapturer;
     private readonly IConsumeModel _consumeModel;

@@ -196,6 +196,65 @@ public class Logic : ILogic
         _logger.LogInformation("Program stopped");
     }
 
+    public void StartTagDuelLoop(CancellationToken cancellationToken)
+    {
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var tagDuelButton = _imageFinder.GetImageLocationCV(_imageNamesService.TagDuel, ProcessNames.DUEL_LINKS);
+
+                if (!tagDuelButton.HasValue)
+                {
+                    _logger.LogInformation("Cant find tag duel button");
+
+                    bool isNetworkInterUpted = _actions.CheckForNetworkInterruption();
+
+                    if (!isNetworkInterUpted)
+                    {
+                        _actions.ClickScreen();
+                        Thread.Sleep(2000);
+                        _actions.ClickPopUpDialogs(_actions.DoesTagDuelButtonExists, cancellationToken);
+                    }
+
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
+                else
+                {
+                    var diffbutton = _actions.OpenTagDuel();
+
+                    bool buttonPressed = _actions.StartDuel(diffbutton);
+
+                    int duelCheckCounter = 0;
+                    while (!_actions.IsDuelOver())
+                    {
+                        Thread.Sleep(10000);
+                        if (duelCheckCounter > 4)
+                        {
+                            bool result = _actions.CheckForNetworkInterruption();
+
+                            if (!result) _actions.ClickScreen();
+                        }
+                        duelCheckCounter++;
+
+                        if (cancellationToken.IsCancellationRequested) break;
+                    }
+
+                    _logger.LogInformation("Duel Over");
+
+                    _actions.ClickPopUpDialogs(_actions.DoesTagDuelButtonExists, cancellationToken);
+
+                    Thread.Sleep(2000);
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Stopping program");
+        }
+
+        _logger.LogInformation("Program stopped");
+    }
     public void StartGateLoop(CancellationToken cancellationToken)
     {
         try
@@ -249,7 +308,7 @@ public class Logic : ILogic
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                var startButton = _imageFinder.GetImageLocationCV(_imageNamesService.Start ,ProcessNames.DUEL_LINKS);
+                var startButton = _imageFinder.GetImageLocationCV(_imageNamesService.Start, ProcessNames.DUEL_LINKS);
                 var turboDuelButton = _imageFinder.GetImageLocationCV(_imageNamesService.TurboDuel, ProcessNames.DUEL_LINKS);
                 var duelButton = _imageFinder.GetImageLocationCV(_imageNamesService.Duel, ProcessNames.DUEL_LINKS);
 

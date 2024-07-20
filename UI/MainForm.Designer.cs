@@ -37,6 +37,7 @@
             UseGpuCheckBox = new CheckBox();
             LaptopCheckBox = new CheckBox();
             DuelistRoad = new CheckBox();
+            tagDuelCheckbox = new CheckBox();
             SuspendLayout();
             // 
             // StartStopButton
@@ -134,11 +135,22 @@
             DuelistRoad.Text = "Duelist Road";
             DuelistRoad.UseVisualStyleBackColor = true;
             // 
+            // tagDuelCheckbox
+            // 
+            tagDuelCheckbox.AutoSize = true;
+            tagDuelCheckbox.Location = new Point(323, 98);
+            tagDuelCheckbox.Name = "tagDuelCheckbox";
+            tagDuelCheckbox.Size = new Size(71, 19);
+            tagDuelCheckbox.TabIndex = 9;
+            tagDuelCheckbox.Text = "Tag Duel";
+            tagDuelCheckbox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(810, 611);
+            Controls.Add(tagDuelCheckbox);
             Controls.Add(DuelistRoad);
             Controls.Add(LaptopCheckBox);
             Controls.Add(UseGpuCheckBox);
@@ -165,5 +177,6 @@
         private CheckBox UseGpuCheckBox;
         private CheckBox LaptopCheckBox;
         private CheckBox DuelistRoad;
+        private CheckBox tagDuelCheckbox;
     }
 }

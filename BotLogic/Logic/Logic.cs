@@ -64,8 +64,6 @@ public class Logic : ILogic
 
             if (cancellationToken.IsCancellationRequested) break;
         }
-
-        _logger.LogInformation("Program stopped");
     }
 
     public void StartDuelWorldLoop(CancellationToken cancellationToken, List<Tag> duelistTypes, bool changeWorld)
@@ -129,12 +127,6 @@ public class Logic : ILogic
         {
             _logger.LogInformation("Stopping program");
         }
-        finally
-        {
-            _logger.LogInformation("Stopping program");
-        }
-
-        _logger.LogInformation("Program stopped");
     }
 
     public void StartRaidEventDueldLoop(CancellationToken cancellationToken)
@@ -192,8 +184,6 @@ public class Logic : ILogic
         {
             _logger.LogInformation("Stopping program");
         }
-
-        _logger.LogInformation("Program stopped");
     }
 
     public void StartTagDuelLoop(CancellationToken cancellationToken)
@@ -252,8 +242,6 @@ public class Logic : ILogic
         {
             _logger.LogInformation("Stopping program");
         }
-
-        _logger.LogInformation("Program stopped");
     }
     public void StartGateLoop(CancellationToken cancellationToken)
     {
@@ -298,8 +286,6 @@ public class Logic : ILogic
         {
             _logger.LogInformation("Stopping program");
         }
-
-        _logger.LogInformation("Program stopped");
     }
 
     public void StartDuelistRoadEventDueldLoop(CancellationToken cancellationToken)
@@ -361,7 +347,5 @@ public class Logic : ILogic
         {
             _logger.LogInformation("Stopping program");
         }
-
-        _logger.LogInformation("Program stopped");
     }
 }

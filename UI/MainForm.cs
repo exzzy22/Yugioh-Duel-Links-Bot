@@ -72,7 +72,6 @@ public partial class MainForm : Form
             StartStopButton.Text = START_TEXT;
             _cts = new();
             StartStopButton.Enabled = true;
-            _logger.LogInformation("Program stopped");
 
             return;
         }
@@ -101,7 +100,6 @@ public partial class MainForm : Form
             StartStopButton.Text = START_TEXT;
             _cts = new();
             StartStopButton.Enabled = true;
-            _logger.LogInformation("Program stopped");
 
             return;
         }
@@ -126,7 +124,6 @@ public partial class MainForm : Form
             StartStopButton.Text = START_TEXT;
             _cts = new();
             StartStopButton.Enabled = true;
-            _logger.LogInformation("Program stopped");
 
             return;
         }
@@ -151,7 +148,6 @@ public partial class MainForm : Form
             StartStopButton.Text = START_TEXT;
             _cts = new();
             StartStopButton.Enabled = true;
-            _logger.LogInformation("Program stopped");
 
             return;
         }
@@ -180,7 +176,6 @@ public partial class MainForm : Form
             StartStopButton.Text = START_TEXT;
             _cts = new();
             StartStopButton.Enabled = true;
-            _logger.LogInformation("Program stopped");
 
             return;
         }

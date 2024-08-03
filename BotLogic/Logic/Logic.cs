@@ -27,42 +27,51 @@ public class Logic : ILogic
 
     public void StartDuelWorldsLoop(CancellationToken cancellationToken, List<Tag> duelistTypes, bool changeWorld)
     {
-        if (!changeWorld)
+        try
         {
-            StartDuelWorldLoop(cancellationToken, duelistTypes, changeWorld);
-
-            return;
-        }
-
-        ImmutableList<Tag> duelWorlds = Tags.Worlds();
-        int currentIndex = 0;
-        bool isFirstIteration = true;
-
-        while (true)
-        {
-            if (!isFirstIteration)
+            if (!changeWorld)
             {
-                Tag currentWorld = duelWorlds[currentIndex];
-                _logger.LogInformation("Change the world to: {world}", currentWorld);
+                StartDuelWorldLoop(cancellationToken, duelistTypes, changeWorld);
 
-                bool isChanged = _actions.ChangeWorld(cancellationToken, currentWorld);
-
-                if (!isChanged)
-                {
-                    _logger.LogError("World change failed");
-                    bool result = _actions.CheckForNetworkInterruption(cancellationToken);
-                }
-
-                if (cancellationToken.IsCancellationRequested) break;
+                return;
             }
 
-            StartDuelWorldLoop(cancellationToken, duelistTypes, changeWorld);
+            ImmutableList<Tag> duelWorlds = Tags.Worlds();
+            int currentIndex = 0;
+            bool isFirstIteration = true;
 
-            currentIndex = (currentIndex + 1) % duelWorlds.Count;
+            while (true)
+            {
+                if (!isFirstIteration)
+                {
+                    Tag currentWorld = duelWorlds[currentIndex];
+                    _logger.LogInformation("Change the world to: {world}", currentWorld);
 
-            isFirstIteration = false;
+                    bool isChanged = _actions.ChangeWorld(cancellationToken, currentWorld);
 
-            if (cancellationToken.IsCancellationRequested) break;
+                    if (!isChanged)
+                    {
+                        _logger.LogError("World change failed");
+                        bool result = _actions.CheckForNetworkInterruption(cancellationToken);
+                    }
+
+                    if (cancellationToken.IsCancellationRequested) break;
+                }
+
+                StartDuelWorldLoop(cancellationToken, duelistTypes, changeWorld);
+
+                currentIndex = (currentIndex + 1) % duelWorlds.Count;
+
+                isFirstIteration = false;
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Stopping program");
+        }
+        finally
+        {
+            _logger.LogInformation("Program stopped");
         }
     }
 
@@ -74,7 +83,7 @@ public class Logic : ILogic
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                if(changeWorld && homepagesChecked > 4) break;
+                if (changeWorld && homepagesChecked > 4) break;
 
                 List<ObjectPoint> duelistsOnHomepage = _actions.GetAllWorldDuelistsOnScreen(cancellationToken, duelistTypes);
 
@@ -126,6 +135,10 @@ public class Logic : ILogic
         catch (OperationCanceledException)
         {
             _logger.LogInformation("Stopping program");
+        }
+        finally
+        {
+            _logger.LogInformation("Program stopped");
         }
     }
 
@@ -183,6 +196,10 @@ public class Logic : ILogic
         catch (OperationCanceledException)
         {
             _logger.LogInformation("Stopping program");
+        }
+        finally
+        {
+            _logger.LogInformation("Program stopped");
         }
     }
 
@@ -242,6 +259,10 @@ public class Logic : ILogic
         {
             _logger.LogInformation("Stopping program");
         }
+        finally
+        {
+            _logger.LogInformation("Program stopped");
+        }
     }
     public void StartGateLoop(CancellationToken cancellationToken)
     {
@@ -285,6 +306,10 @@ public class Logic : ILogic
         catch (OperationCanceledException)
         {
             _logger.LogInformation("Stopping program");
+        }
+        finally
+        {
+            _logger.LogInformation("Program stopped");
         }
     }
 
@@ -346,6 +371,10 @@ public class Logic : ILogic
         catch (OperationCanceledException)
         {
             _logger.LogInformation("Stopping program");
+        }
+        finally
+        {
+            _logger.LogInformation("Program stopped");
         }
     }
 }

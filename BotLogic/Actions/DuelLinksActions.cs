@@ -25,14 +25,14 @@ public class DuelLinksActions : IActions
         _logger = logger;
     }
 
-    public bool StartDuel(ObjectPoint objectPoint)
+    public bool StartDuel(CancellationToken ct, ObjectPoint objectPoint)
     {
         // Click on duelist
         _mouseSimulator.SimulateMouseClick(objectPoint.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
         Thread.Sleep(3000);
 
         // Check if auto duel button exists
-        Point? autoDuelPoint = _imageFinder.GetImageLocationCV(_imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS);
+        Point? autoDuelPoint = _imageFinder.GetImageLocationCV(ct, _imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS);
 
         if (autoDuelPoint.HasValue)
         {
@@ -42,7 +42,7 @@ public class DuelLinksActions : IActions
         }
 
         // Check if duelist dialogs exists
-        List<ObjectPoint> duelistDialogPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
+        List<ObjectPoint> duelistDialogPoint = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
 
         while (duelistDialogPoint.Count > 0)
         {
@@ -55,7 +55,7 @@ public class DuelLinksActions : IActions
                 Thread.Sleep(2000);
             }
 
-            autoDuelPoint = _imageFinder.GetImageLocationCV(_imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS);
+            autoDuelPoint = _imageFinder.GetImageLocationCV(ct, _imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS);
 
             if (autoDuelPoint.HasValue)
             {
@@ -64,11 +64,11 @@ public class DuelLinksActions : IActions
                 return true;
             }
 
-            duelistDialogPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
+            duelistDialogPoint = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
         }
 
         // Check for missclicks and get back if it was missclick
-        List<ObjectPoint> missclickButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.MissClickButtons());
+        List<ObjectPoint> missclickButtons = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tags.MissClickButtons());
 
         ObjectPoint? backButton = missclickButtons.FirstOrDefault();
 
@@ -81,11 +81,11 @@ public class DuelLinksActions : IActions
         return false;
     }
 
-    public void ClickDuelistDialogUntilDissapers()
+    public void ClickDuelistDialogUntilDissapers(CancellationToken ct)
     {
         _logger.LogInformation(nameof(ClickDuelistDialogUntilDissapers));
 
-        List<ObjectPoint> duelistDialogPoints = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
+        List<ObjectPoint> duelistDialogPoints = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
 
         while (duelistDialogPoints.Count > 0)
         {
@@ -95,19 +95,19 @@ public class DuelLinksActions : IActions
             }
             Thread.Sleep(3000);
 
-            if(_imageFinder.DoesImageExistsCV(_imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS)) { break; }
+            if(_imageFinder.DoesImageExistsCV(ct, _imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS)) { break; }
 
-            duelistDialogPoints = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
+            duelistDialogPoints = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
         }
     }
 
-    public ObjectPoint OpenDuelistRoadDuel()
+    public ObjectPoint OpenDuelistRoadDuel(CancellationToken ct)
     {
         _logger.LogInformation(nameof(OpenDuelistRoadDuel));
 
         int retryCount = 0;
 
-        Point? startButton = _imageFinder.GetImageLocationCV(_imageNamesService.Start, ProcessNames.DUEL_LINKS);
+        Point? startButton = _imageFinder.GetImageLocationCV(ct, _imageNamesService.Start, ProcessNames.DUEL_LINKS);
 
         if (startButton.HasValue)
         {
@@ -117,96 +117,96 @@ public class DuelLinksActions : IActions
             Thread.Sleep(3000);
         }
 
-        Point? duelbutton = _imageFinder.GetImageLocationCV(_imageNamesService.TurboDuel, ProcessNames.DUEL_LINKS);
+        Point? duelbutton = _imageFinder.GetImageLocationCV(ct, _imageNamesService.TurboDuel, ProcessNames.DUEL_LINKS);
 
         if (!duelbutton.HasValue)
         {
-            duelbutton = _imageFinder.GetImageLocationCV(_imageNamesService.Duel, ProcessNames.DUEL_LINKS);
+            duelbutton = _imageFinder.GetImageLocationCV(ct, _imageNamesService.Duel, ProcessNames.DUEL_LINKS);
         }
         Thread.Sleep(1000);
         _mouseSimulator.SimulateMouseClick(duelbutton.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
 
-        ClickDuelistDialogUntilLevelSelectAppers();
+        ClickDuelistDialogUntilLevelSelectAppers(ct);
 
-        Point? diffChose = _imageFinder.GetImageLocationCV(_imageNamesService.Hard, ProcessNames.DUEL_LINKS);
+        Point? diffChose = _imageFinder.GetImageLocationCV(ct, _imageNamesService.Hard, ProcessNames.DUEL_LINKS);
 
         while (!diffChose.HasValue)
         {
             if (retryCount > 3) break;
 
-            diffChose = _imageFinder.GetImageLocationCV(_imageNamesService.Hard, ProcessNames.DUEL_LINKS);
+            diffChose = _imageFinder.GetImageLocationCV(ct, _imageNamesService.Hard, ProcessNames.DUEL_LINKS);
             retryCount++;
         }
 
         return new ObjectPoint { Score = 1, Tag = Tag.CVImage, Point = diffChose.Value };
     }
 
-    public ObjectPoint OpenTagDuel()
+    public ObjectPoint OpenTagDuel(CancellationToken ct)
     {
         _logger.LogInformation(nameof(OpenTagDuel));
 
         int retryCount = 0;
 
-        Point? duelbutton = _imageFinder.GetImageLocationCV(_imageNamesService.TagDuel, ProcessNames.DUEL_LINKS);
+        Point? duelbutton = _imageFinder.GetImageLocationCV(ct, _imageNamesService.TagDuel, ProcessNames.DUEL_LINKS);
 
         Thread.Sleep(1000);
         _mouseSimulator.SimulateMouseClick(duelbutton.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
 
-        ClickDuelistDialogUntilLevelSelectAppers();
+        ClickDuelistDialogUntilLevelSelectAppers(ct);
 
-        Point? diffChose = _imageFinder.GetImageLocationCV(_imageNamesService.Hard, ProcessNames.DUEL_LINKS);
+        Point? diffChose = _imageFinder.GetImageLocationCV(ct, _imageNamesService.Hard, ProcessNames.DUEL_LINKS);
 
         while (!diffChose.HasValue)
         {
             if (retryCount > 3) break;
 
-            diffChose = _imageFinder.GetImageLocationCV(_imageNamesService.Hard, ProcessNames.DUEL_LINKS);
+            diffChose = _imageFinder.GetImageLocationCV(ct, _imageNamesService.Hard, ProcessNames.DUEL_LINKS);
             retryCount++;
         }
 
         return new ObjectPoint { Score = 1, Tag = Tag.CVImage, Point = diffChose.Value };
     }
 
-    public void StartAutoDuel()
+    public void StartAutoDuel(CancellationToken ct)
     { 
         _logger.LogInformation(nameof(StartAutoDuel));
 
         int retryCount = 0;
 
-        Point? autoDialog = _imageFinder.GetImageLocationCV(_imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS);
+        Point? autoDialog = _imageFinder.GetImageLocationCV(ct, _imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS);
 
         while (!autoDialog.HasValue)
         {
             if (retryCount > 3) return;
 
-            autoDialog = _imageFinder.GetImageLocationCV(_imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS);
+            autoDialog = _imageFinder.GetImageLocationCV(ct, _imageNamesService.AutoDuel, ProcessNames.DUEL_LINKS);
             retryCount++;
         }
 
         _mouseSimulator.SimulateMouseClick(autoDialog.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 
-    public void OpenGateDuel()
+    public void OpenGateDuel(CancellationToken ct)
     {
         _logger.LogInformation(nameof(OpenGateDuel));
 
         int retryCount = 0;
 
-        Point? duel = _imageFinder.GetImageLocationCV(_imageNamesService.Duel, ProcessNames.DUEL_LINKS);
+        Point? duel = _imageFinder.GetImageLocationCV(ct, _imageNamesService.Duel, ProcessNames.DUEL_LINKS);
 
         if (!duel.HasValue)
         {
-            duel = _imageFinder.GetImageLocationCV(_imageNamesService.RushDuel, ProcessNames.DUEL_LINKS);
+            duel = _imageFinder.GetImageLocationCV(ct, _imageNamesService.RushDuel, ProcessNames.DUEL_LINKS);
         }
 
         while (!duel.HasValue)
         {
             if (retryCount > 3) return;
 
-            duel = _imageFinder.GetImageLocationCV(_imageNamesService.Duel, ProcessNames.DUEL_LINKS);
+            duel = _imageFinder.GetImageLocationCV(ct, _imageNamesService.Duel, ProcessNames.DUEL_LINKS);
             if (!duel.HasValue)
             {
-                duel = _imageFinder.GetImageLocationCV(_imageNamesService.RushDuel, ProcessNames.DUEL_LINKS);
+                duel = _imageFinder.GetImageLocationCV(ct, _imageNamesService.RushDuel, ProcessNames.DUEL_LINKS);
             }
             retryCount++;
         }
@@ -215,54 +215,54 @@ public class DuelLinksActions : IActions
 
         Thread.Sleep(4000);
 
-        ClickDuelistDialogUntilDissapers();
+        ClickDuelistDialogUntilDissapers(ct);
     }
 
 
-    public void MoveScreenLeft()
+    public void MoveScreenLeft(CancellationToken ct)
     {
         _logger.LogInformation(nameof(MoveScreenLeft));
 
         int retryCount = 0;
 
-        Point? point = _imageFinder.GetImageLocationCV(_imageNamesService.LeftArrow, ProcessNames.DUEL_LINKS);
+        Point? point = _imageFinder.GetImageLocationCV(ct, _imageNamesService.LeftArrow, ProcessNames.DUEL_LINKS);
 
         while(!point.HasValue)
         {
             if (retryCount > 3) return;
 
-            point = _imageFinder.GetImageLocationCV(_imageNamesService.LeftArrow, ProcessNames.DUEL_LINKS);
+            point = _imageFinder.GetImageLocationCV(ct, _imageNamesService.LeftArrow, ProcessNames.DUEL_LINKS);
         }
 
         _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 
-    public void MoveScreenRight()
+    public void MoveScreenRight(CancellationToken ct)
     {
         _logger.LogInformation(nameof(MoveScreenRight));
 
         int retryCount = 0;
 
-        Point? point = _imageFinder.GetImageLocationCV(_imageNamesService.RightArrow, ProcessNames.DUEL_LINKS);
+        Point? point = _imageFinder.GetImageLocationCV(ct, _imageNamesService.RightArrow, ProcessNames.DUEL_LINKS);
 
         while (!point.HasValue)
         {
             if (retryCount > 3) return;
 
-            point = _imageFinder.GetImageLocationCV(_imageNamesService.RightArrow, ProcessNames.DUEL_LINKS);
+            point = _imageFinder.GetImageLocationCV(ct, _imageNamesService.RightArrow, ProcessNames.DUEL_LINKS);
         }
 
         _mouseSimulator.SimulateMouseClick(point.Value, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 
-    public List<ObjectPoint> GetAllWorldDuelistsOnScreen(List<Tag> duelistTypes)
+    public List<ObjectPoint> GetAllWorldDuelistsOnScreen(CancellationToken ct, List<Tag> duelistTypes)
     {
         _logger.LogInformation("Get all world duelists on screen");
 
-        return _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, duelistTypes, 0.7f);
+        return _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, duelistTypes, 0.7f);
     }
 
-    public void ClickPopUpDialogs(Func<bool> checkHomepage, CancellationToken cancellationToken)
+    public void ClickPopUpDialogs(Func<bool> checkHomepage, CancellationToken ct)
     {
         _logger.LogInformation(nameof(ClickPopUpDialogs));
 
@@ -271,8 +271,7 @@ public class DuelLinksActions : IActions
 
         while (!homepageexists)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
+            clickableButtons = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
 
             if (clickableButtons.Count > 0)
             {
@@ -281,33 +280,29 @@ public class DuelLinksActions : IActions
             }
             else
             {
-                ClickScreen();
+                ClickScreen(ct);
             }
 
             homepageexists = checkHomepage();
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
-        clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
+        clickableButtons = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
 
         while (clickableButtons.Count > 0)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             _mouseSimulator.SimulateMouseClick(clickableButtons.First().Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
             Thread.Sleep(3000);
 
-            clickableButtons = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
+            clickableButtons = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tags.ClickableButtons());
             Thread.Sleep(3000);
         }
-
-        cancellationToken.ThrowIfCancellationRequested();
     }
 
-    public bool IsOnHomepage()
+    public bool IsOnHomepage(CancellationToken ct)
     {
         foreach (var image in _imageNamesService.HomepageImages())
         {
-            if (_imageFinder.DoesImageExistsCV(image, ProcessNames.DUEL_LINKS))
+            if (_imageFinder.DoesImageExistsCV(ct, image, ProcessNames.DUEL_LINKS))
             {
                 return true;
             }
@@ -317,16 +312,16 @@ public class DuelLinksActions : IActions
         return false;
     }
 
-    public bool DoesGateExists()
+    public bool DoesGateExists(CancellationToken ct)
     {
-        ObjectPoint? gate = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.Gate).FirstOrDefault();
+        ObjectPoint? gate = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.Gate).FirstOrDefault();
 
         return gate is not null;
     }
 
-    public bool DoesAssistButtonExists()
+    public bool DoesAssistButtonExists(CancellationToken ct)
     {
-        bool result = _imageFinder.DoesImageExistssML(ProcessNames.DUEL_LINKS, Tag.AssistDuelButton);
+        bool result = _imageFinder.DoesImageExistssML(ct,ProcessNames.DUEL_LINKS, Tag.AssistDuelButton);
 
         if (!result)
         {
@@ -336,50 +331,50 @@ public class DuelLinksActions : IActions
         return result;
     }
 
-    public bool DoesStartButtonExists()
+    public bool DoesStartButtonExists(CancellationToken ct)
     {
-        bool result = _imageFinder.DoesImageExistsCV(_imageNamesService.Start, ProcessNames.DUEL_LINKS);
+        bool result = _imageFinder.DoesImageExistsCV(ct, _imageNamesService.Start, ProcessNames.DUEL_LINKS);
 
         return result;
     }
 
-    public bool DoesTagDuelButtonExists()
+    public bool DoesTagDuelButtonExists(CancellationToken ct)
     {
-        bool result = _imageFinder.DoesImageExistsCV(_imageNamesService.TagDuel, ProcessNames.DUEL_LINKS);
+        bool result = _imageFinder.DoesImageExistsCV(ct ,_imageNamesService.TagDuel, ProcessNames.DUEL_LINKS);
 
         return result;
     }
 
-    public bool IsDuelOver()
+    public bool IsDuelOver(CancellationToken ct)
     {
         _logger.LogInformation(nameof(IsDuelOver));
 
-        List<ObjectPoint> okButtonPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.OkButton, 0.5f);
+        List<ObjectPoint> okButtonPoint = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.OkButton, 0.5f);
 
         return okButtonPoint.Count > 0;
     }
 
-    public bool DoesTagExists(Tag tag, float score = 0f)
+    public bool DoesTagExists(CancellationToken ct, Tag tag, float score = 0f)
     {
         _logger.LogInformation(nameof(DoesTagExists));
 
-        List<ObjectPoint> objects = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, tag, score);
+        List<ObjectPoint> objects = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, tag, score);
 
         return objects.Count > 0;
     }
 
-    public void ClickScreen()
+    public void ClickScreen(CancellationToken ct)
     {
         _logger.LogInformation(nameof(ClickScreen));
 
-        Point point = _imageFinder.GetImagePosition(ProcessNames.DUEL_LINKS, ImageAlignment.Bottom);
+        Point point = _imageFinder.GetImagePosition(ct, ProcessNames.DUEL_LINKS, ImageAlignment.Bottom);
 
         _mouseSimulator.SimulateMouseClick(point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 
-    public bool CheckForNetworkInterruption()
+    public bool CheckForNetworkInterruption(CancellationToken ct)
     {
-        List<ObjectPoint> retryPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.RetryButton, 0.7f);
+        List<ObjectPoint> retryPoint = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.RetryButton, 0.7f);
 
         if (retryPoint.Count > 0)
         {
@@ -394,9 +389,9 @@ public class DuelLinksActions : IActions
         return false;
     }
 
-    public bool ChangeWorld(Tag world)
+    public bool ChangeWorld(CancellationToken ct,Tag world)
     {
-        List<ObjectPoint> worldMenu = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.WorldMenu, 0.5f);
+        List<ObjectPoint> worldMenu = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.WorldMenu, 0.5f);
 
         if (worldMenu.Count < 1)
         {
@@ -408,7 +403,7 @@ public class DuelLinksActions : IActions
 
         Thread.Sleep(2000);
 
-        List<ObjectPoint> worldToGo = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, world, 0.35f);
+        List<ObjectPoint> worldToGo = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, world, 0.35f);
 
         if (worldToGo.Count < 1)
         {
@@ -423,32 +418,32 @@ public class DuelLinksActions : IActions
         return true;
     }
 
-    public void OpenGate()
+    public void OpenGate(CancellationToken ct)
     {
         _logger.LogInformation(nameof(OpenGate));
 
         int retryCount = 0;
 
-        ObjectPoint? gate = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.Gate).FirstOrDefault();
+        ObjectPoint? gate = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.Gate).FirstOrDefault();
 
         while (gate is null)
         {
             if (retryCount > 3) return;
 
-            gate = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.Gate).FirstOrDefault();
+            gate = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.Gate).FirstOrDefault();
             retryCount++;
         }
 
         _mouseSimulator.SimulateMouseClick(gate.Point, _helpers.GetWindowHandle(ProcessNames.DUEL_LINKS));
     }
 
-    private void ClickDuelistDialogUntilLevelSelectAppers()
+    private void ClickDuelistDialogUntilLevelSelectAppers(CancellationToken ct)
     {
         _logger.LogInformation(nameof(ClickDuelistDialogUntilLevelSelectAppers));
 
-        List<ObjectPoint> duelistDialogPoints = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
+        List<ObjectPoint> duelistDialogPoints = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
 
-        while (!_imageFinder.DoesImageExistsCV(_imageNamesService.Hard, ProcessNames.DUEL_LINKS))
+        while (!_imageFinder.DoesImageExistsCV(ct, _imageNamesService.Hard, ProcessNames.DUEL_LINKS))
         {
             foreach (ObjectPoint point in duelistDialogPoints)
             {
@@ -456,7 +451,7 @@ public class DuelLinksActions : IActions
             }
             Thread.Sleep(2000);
 
-            duelistDialogPoints = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
+            duelistDialogPoints = _imageFinder.GetImagesLocationsML(ct, ProcessNames.DUEL_LINKS, Tag.DuelistDialog);
         }
     }
 }

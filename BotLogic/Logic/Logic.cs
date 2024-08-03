@@ -45,12 +45,12 @@ public class Logic : ILogic
                 Tag currentWorld = duelWorlds[currentIndex];
                 _logger.LogInformation("Change the world to: {world}", currentWorld);
 
-                bool isChanged = _actions.ChangeWorld(currentWorld);
+                bool isChanged = _actions.ChangeWorld(cancellationToken, currentWorld);
 
                 if (!isChanged)
                 {
                     _logger.LogError("World change failed");
-                    bool result = _actions.CheckForNetworkInterruption();
+                    bool result = _actions.CheckForNetworkInterruption(cancellationToken);
                 }
 
                 if (cancellationToken.IsCancellationRequested) break;
@@ -78,7 +78,7 @@ public class Logic : ILogic
             {
                 if(changeWorld && homepagesChecked > 4) break;
 
-                List<ObjectPoint> duelistsOnHomepage = _actions.GetAllWorldDuelistsOnScreen(duelistTypes);
+                List<ObjectPoint> duelistsOnHomepage = _actions.GetAllWorldDuelistsOnScreen(cancellationToken, duelistTypes);
 
                 _logger.LogInformation("Found {Count} Duelists", duelistsOnHomepage.Count);
 
@@ -86,26 +86,26 @@ public class Logic : ILogic
 
                 if (duelistsOnHomepage.Count < 1)
                 {
-                    _actions.CheckForNetworkInterruption();
+                    _actions.CheckForNetworkInterruption(cancellationToken);
                 }
 
                 foreach (var point in duelistsOnHomepage)
                 {
-                    bool duelistExists = _actions.StartDuel(point);
+                    bool duelistExists = _actions.StartDuel(cancellationToken, point);
                     _logger.LogInformation("Click {Tag}", point.Tag);
 
                     if (!duelistExists) continue;
 
                     int duelCheckCounter = 0;
-                    while (!_actions.IsDuelOver())
+                    while (!_actions.IsDuelOver(cancellationToken))
                     {
                         cancellationToken.ThrowIfCancellationRequested();
                         Thread.Sleep(10000);
                         if (duelCheckCounter > 4)
                         {
-                            bool result = _actions.CheckForNetworkInterruption();
+                            bool result = _actions.CheckForNetworkInterruption(cancellationToken);
 
-                            if (!result) _actions.ClickScreen();
+                            if (!result) _actions.ClickScreen(cancellationToken);
                         }
                         duelCheckCounter++;
 
@@ -114,11 +114,11 @@ public class Logic : ILogic
 
                     _logger.LogInformation("Duel Over");
 
-                    _actions.ClickPopUpDialogs(_actions.IsOnHomepage, cancellationToken);
+                    _actions.ClickPopUpDialogs(() => _actions.IsOnHomepage(cancellationToken), cancellationToken);
                 }
 
                 cancellationToken.ThrowIfCancellationRequested();
-                _actions.MoveScreenRight();
+                _actions.MoveScreenRight(cancellationToken);
                 Thread.Sleep(2000);
                 homepagesChecked++;
 
@@ -143,19 +143,19 @@ public class Logic : ILogic
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                List<ObjectPoint> assistDuelPoint = _imageFinder.GetImagesLocationsML(ProcessNames.DUEL_LINKS, Tag.AssistDuelButton);
+                List<ObjectPoint> assistDuelPoint = _imageFinder.GetImagesLocationsML(cancellationToken, ProcessNames.DUEL_LINKS, Tag.AssistDuelButton);
 
                 _logger.LogInformation("Found {Count} AssistedDuelButtons", assistDuelPoint.Count);
 
                 if (assistDuelPoint.Count < 1)
                 {
-                    bool isNetworkInterUpted = _actions.CheckForNetworkInterruption();
+                    bool isNetworkInterUpted = _actions.CheckForNetworkInterruption(cancellationToken);
 
                     if (!isNetworkInterUpted)
                     {
-                        _actions.ClickScreen();
+                        _actions.ClickScreen(cancellationToken);
                         Thread.Sleep(2000);
-                        _actions.ClickPopUpDialogs(_actions.DoesAssistButtonExists, cancellationToken);
+                        _actions.ClickPopUpDialogs(() => _actions.DoesAssistButtonExists(cancellationToken), cancellationToken);
                     }
 
                     if(cancellationToken.IsCancellationRequested) break;
@@ -163,17 +163,17 @@ public class Logic : ILogic
                 else
                 {
                     ObjectPoint buttonPoint = assistDuelPoint.First();
-                    bool buttonPressed = _actions.StartDuel(buttonPoint);
+                    bool buttonPressed = _actions.StartDuel(cancellationToken, buttonPoint);
 
                     int duelCheckCounter = 0;
-                    while (!_actions.IsDuelOver())
+                    while (!_actions.IsDuelOver(cancellationToken))
                     {
                         Thread.Sleep(10000);
                         if (duelCheckCounter > 4)
                         {
-                            bool result = _actions.CheckForNetworkInterruption();
+                            bool result = _actions.CheckForNetworkInterruption(cancellationToken);
 
-                            if (!result) _actions.ClickScreen();
+                            if (!result) _actions.ClickScreen(cancellationToken);
                         }
                         duelCheckCounter++;
 
@@ -182,7 +182,7 @@ public class Logic : ILogic
 
                     _logger.LogInformation("Duel Over");
 
-                    _actions.ClickPopUpDialogs(_actions.DoesAssistButtonExists, cancellationToken);
+                    _actions.ClickPopUpDialogs(() => _actions.DoesAssistButtonExists(cancellationToken), cancellationToken);
 
                     Thread.Sleep(2000);
                 }
@@ -202,38 +202,38 @@ public class Logic : ILogic
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                var tagDuelButton = _imageFinder.GetImageLocationCV(_imageNamesService.TagDuel, ProcessNames.DUEL_LINKS);
+                var tagDuelButton = _imageFinder.GetImageLocationCV(cancellationToken, _imageNamesService.TagDuel, ProcessNames.DUEL_LINKS);
 
                 if (!tagDuelButton.HasValue)
                 {
                     _logger.LogInformation("Cant find tag duel button");
 
-                    bool isNetworkInterUpted = _actions.CheckForNetworkInterruption();
+                    bool isNetworkInterUpted = _actions.CheckForNetworkInterruption(cancellationToken);
 
                     if (!isNetworkInterUpted)
                     {
-                        _actions.ClickScreen();
+                        _actions.ClickScreen(cancellationToken);
                         Thread.Sleep(2000);
-                        _actions.ClickPopUpDialogs(_actions.DoesTagDuelButtonExists, cancellationToken);
+                        _actions.ClickPopUpDialogs(() => _actions.DoesTagDuelButtonExists(cancellationToken), cancellationToken);
                     }
 
                     if (cancellationToken.IsCancellationRequested) break;
                 }
                 else
                 {
-                    var diffbutton = _actions.OpenTagDuel();
+                    var diffbutton = _actions.OpenTagDuel(cancellationToken);
 
-                    bool buttonPressed = _actions.StartDuel(diffbutton);
+                    bool buttonPressed = _actions.StartDuel(cancellationToken, diffbutton);
 
                     int duelCheckCounter = 0;
-                    while (!_actions.IsDuelOver())
+                    while (!_actions.IsDuelOver(cancellationToken))
                     {
                         Thread.Sleep(10000);
                         if (duelCheckCounter > 4)
                         {
-                            bool result = _actions.CheckForNetworkInterruption();
+                            bool result = _actions.CheckForNetworkInterruption(cancellationToken);
 
-                            if (!result) _actions.ClickScreen();
+                            if (!result) _actions.ClickScreen(cancellationToken);
                         }
                         duelCheckCounter++;
 
@@ -242,7 +242,7 @@ public class Logic : ILogic
 
                     _logger.LogInformation("Duel Over");
 
-                    _actions.ClickPopUpDialogs(_actions.DoesTagDuelButtonExists, cancellationToken);
+                    _actions.ClickPopUpDialogs(() => _actions.DoesTagDuelButtonExists(cancellationToken), cancellationToken);
 
                     Thread.Sleep(2000);
                 }
@@ -261,24 +261,24 @@ public class Logic : ILogic
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                _actions.OpenGate();
+                _actions.OpenGate(cancellationToken);
                 Thread.Sleep(5000);
 
-                _actions.OpenGateDuel();
+                _actions.OpenGateDuel(cancellationToken);
                 Thread.Sleep(3000);
 
-                _actions.StartAutoDuel();
+                _actions.StartAutoDuel(cancellationToken);
 
                 int duelCheckCounter = 0;
-                while (!_actions.IsDuelOver())
+                while (!_actions.IsDuelOver(cancellationToken))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     Thread.Sleep(10000);
                     if (duelCheckCounter > 4)
                     {
-                        bool result = _actions.CheckForNetworkInterruption();
+                        bool result = _actions.CheckForNetworkInterruption(cancellationToken);
 
-                        if (!result) _actions.ClickScreen();
+                        if (!result) _actions.ClickScreen(cancellationToken);
                     }
                     duelCheckCounter++;
 
@@ -287,7 +287,7 @@ public class Logic : ILogic
 
                 _logger.LogInformation("Duel Over");
 
-                _actions.ClickPopUpDialogs(_actions.DoesGateExists, cancellationToken);
+                _actions.ClickPopUpDialogs(() => _actions.DoesGateExists(cancellationToken), cancellationToken);
 
                 Thread.Sleep(2000);
 
@@ -308,41 +308,41 @@ public class Logic : ILogic
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                var startButton = _imageFinder.GetImageLocationCV(_imageNamesService.Start, ProcessNames.DUEL_LINKS);
-                var turboDuelButton = _imageFinder.GetImageLocationCV(_imageNamesService.TurboDuel, ProcessNames.DUEL_LINKS);
-                var duelButton = _imageFinder.GetImageLocationCV(_imageNamesService.Duel, ProcessNames.DUEL_LINKS);
+                var startButton = _imageFinder.GetImageLocationCV(cancellationToken, _imageNamesService.Start, ProcessNames.DUEL_LINKS);
+                var turboDuelButton = _imageFinder.GetImageLocationCV(cancellationToken,_imageNamesService.TurboDuel, ProcessNames.DUEL_LINKS);
+                var duelButton = _imageFinder.GetImageLocationCV(cancellationToken, _imageNamesService.Duel, ProcessNames.DUEL_LINKS);
 
 
                 if (!startButton.HasValue && !turboDuelButton.HasValue && !duelButton.HasValue)
                 {
                     _logger.LogInformation("Cant find start button");
 
-                    bool isNetworkInterUpted = _actions.CheckForNetworkInterruption();
+                    bool isNetworkInterUpted = _actions.CheckForNetworkInterruption(cancellationToken);
 
                     if (!isNetworkInterUpted)
                     {
-                        _actions.ClickScreen();
+                        _actions.ClickScreen(cancellationToken);
                         Thread.Sleep(2000);
-                        _actions.ClickPopUpDialogs(_actions.DoesStartButtonExists, cancellationToken);
+                        _actions.ClickPopUpDialogs(() => _actions.DoesStartButtonExists(cancellationToken), cancellationToken);
                     }
 
                     if (cancellationToken.IsCancellationRequested) break;
                 }
                 else
                 {
-                    var diffbutton = _actions.OpenDuelistRoadDuel();
+                    var diffbutton = _actions.OpenDuelistRoadDuel(cancellationToken);
 
-                    bool buttonPressed = _actions.StartDuel(diffbutton);
+                    bool buttonPressed = _actions.StartDuel(cancellationToken, diffbutton);
 
                     int duelCheckCounter = 0;
-                    while (!_actions.IsDuelOver())
+                    while (!_actions.IsDuelOver(cancellationToken))
                     {
                         Thread.Sleep(10000);
                         if (duelCheckCounter > 4)
                         {
-                            bool result = _actions.CheckForNetworkInterruption();
+                            bool result = _actions.CheckForNetworkInterruption(cancellationToken);
 
-                            if (!result) _actions.ClickScreen();
+                            if (!result) _actions.ClickScreen(cancellationToken);
                         }
                         duelCheckCounter++;
 
@@ -351,7 +351,7 @@ public class Logic : ILogic
 
                     _logger.LogInformation("Duel Over");
 
-                    _actions.ClickPopUpDialogs(_actions.DoesStartButtonExists, cancellationToken);
+                    _actions.ClickPopUpDialogs(() => _actions.DoesStartButtonExists(cancellationToken), cancellationToken);
 
                     Thread.Sleep(2000);
                 }

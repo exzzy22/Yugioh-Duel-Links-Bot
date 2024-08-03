@@ -26,8 +26,10 @@ public class ImageFinder : IImageFinder
         _logger = logger;
     }
 
-    public List<ObjectPoint> GetImagesLocationsML(string processName, List<Tag>? tags = null, float threshold = 0.5f)
+    public List<ObjectPoint> GetImagesLocationsML(CancellationToken ct, string processName, List<Tag>? tags = null, float threshold = 0.5f)
     {
+        ct.ThrowIfCancellationRequested();
+
         string tempScreenshotPath = CreateScreenshot(processName);
 
         List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, threshold, tags);
@@ -37,8 +39,10 @@ public class ImageFinder : IImageFinder
         return ocbjectPoints;
     }
 
-    public List<ObjectPoint> GetImagesLocationsML(string processName, Tag tag, float threshold = 0.5f)
+    public List<ObjectPoint> GetImagesLocationsML(CancellationToken ct, string processName, Tag tag, float threshold = 0.5f)
     {
+        ct.ThrowIfCancellationRequested();
+
         string tempScreenshotPath = CreateScreenshot(processName);
 
         List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tag, threshold);
@@ -48,8 +52,10 @@ public class ImageFinder : IImageFinder
         return ocbjectPoints;
     }
 
-    public bool DoesImageExistssML(string processName, Tag tag, float threshold = 0.5f)
+    public bool DoesImageExistssML(CancellationToken ct, string processName, Tag tag, float threshold = 0.5f)
     {
+        ct.ThrowIfCancellationRequested();
+
         string tempScreenshotPath = CreateScreenshot(processName);
 
         List<ObjectPoint> ocbjectPoints = _consumeModel.GetObjects(tempScreenshotPath, tag, threshold);
@@ -59,8 +65,10 @@ public class ImageFinder : IImageFinder
         return ocbjectPoints.Count > 0;
     }
 
-    public Point? GetImageLocationCV(string imageName, string processName)
+    public Point? GetImageLocationCV(CancellationToken ct, string imageName, string processName)
     {
+        ct.ThrowIfCancellationRequested();
+
         string tempScreenshotPath = CreateScreenshot(processName);
         string imagePath = GetImagePath(imageName);
 
@@ -82,8 +90,10 @@ public class ImageFinder : IImageFinder
         }
     }
 
-    public bool DoesImageExistsCV(string imageName, string processName)
+    public bool DoesImageExistsCV(CancellationToken ct, string imageName, string processName)
     {
+        ct.ThrowIfCancellationRequested();
+
         string tempScreenshotPath = CreateScreenshot(processName);
         string imagePath = GetImagePath(imageName);
 
@@ -102,8 +112,10 @@ public class ImageFinder : IImageFinder
         }
     }
 
-    public Point GetImagePosition(string processName, ImageAlignment alignment)
+    public Point GetImagePosition(CancellationToken ct, string processName, ImageAlignment alignment)
     {
+        ct.ThrowIfCancellationRequested();
+
         string tempScreenshotPath = CreateScreenshot(processName);
 
         int centerX = 0;

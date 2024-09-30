@@ -1,3 +1,7 @@
+![.NET 8](https://img.shields.io/badge/.NET-8.0-purple?logo=dotnet)
+![Emgu.CV](https://img.shields.io/badge/Emgu.CV-blue?logo=opencv)
+![ML.NET](https://img.shields.io/badge/ML.NET-blueviolet?logo=ml-dot-net)
+
 ![GUI screenshot](GUIscreenshots.png)
 
 # Project Overview
